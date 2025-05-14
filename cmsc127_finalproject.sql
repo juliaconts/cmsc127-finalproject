@@ -180,8 +180,8 @@ DROP TABLE IF EXISTS `member`;
 CREATE TABLE `member` (
   `studentID` int(11) NOT NULL,
   `firstName` varchar(30) DEFAULT NULL,
-  `lastName` varchar(30) DEFAULT NULL,
   `middleName` varchar(30) DEFAULT NULL,
+  `lastName` varchar(30) DEFAULT NULL,
   `status` varchar(30) DEFAULT NULL,
   `upMail` varchar(30) DEFAULT NULL,
   `yearLevel` int(11) DEFAULT NULL,
@@ -189,7 +189,7 @@ CREATE TABLE `member` (
   `degreeProgram` varchar(50) DEFAULT NULL,
   `contactNo` int(11) DEFAULT NULL,
   `presentAddress` varchar(100) DEFAULT NULL,
-  `currentAddress` varchar(100) DEFAULT NULL,
+  `homeAddress` varchar(100) DEFAULT NULL,
   `birthday` varchar(30) DEFAULT NULL,
   `signature` varchar(500) DEFAULT NULL,
   `idPicture` varchar(500) DEFAULT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE `member` (
 -- Dumping data for table `member`
 --
 
-INSERT INTO `member` (`studentID`, `firstName`, `lastName`, `middleName`, `status`, `upMail`, `yearLevel`, `university`, `degreeProgram`, `contactNo`, `presentAddress`, `currentAddress`, `birthday`, `signature`, `idPicture`, `form5`) VALUES
+INSERT INTO `member` (`studentID`, `firstName`, `middleName`, `lastName`, `status`, `upMail`, `yearLevel`, `university`, `degreeProgram`, `contactNo`, `presentAddress`, `homeAddress`, `birthday`, `signature`, `idPicture`, `form5`) VALUES
 (201799001, 'Karen', 'Koyama', 'Aijo', 'Alumni', 'kkaijo@up.edu.ph', NULL, 'University of the Philippines - Visayas', 'BS in Computer Science', 2147483647, 'Yokohama, Japan', 'Yokohama, Japan', '2001-09-27', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
 (201799018, 'Maya', 'Tomita', 'Tendo', 'Alumni', 'mmtendo@up.edu.ph', NULL, 'University of the Philippines - Visayas', 'BS in Computer Science', 2147483647, 'Yokohama, Japan', 'Yokohama, Japan', '2001-07-24', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
 (202101829, 'Myra', 'Sumagaysay', 'Verde', 'Shiftee', 'msverde@up.edu.ph', 2, 'University of the Philippines - Visayas', 'BS in Computer Science', 2147483647, 'Balay Lampirong, UPV', 'Lambunao, Iloilo', '2003-02-27', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
