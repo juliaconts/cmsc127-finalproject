@@ -48,7 +48,7 @@ if ($result && $result->num_rows > 0) {
                 "<td align='center'>".$row["role"]."</td>".
                 "<td align='center'>".$row["status"]."</td>";
 
-        echo "<td aligh='center'" . ($recordComplete ? "green" : "red") . "'>" .
+        echo "<td align='center'" . ($recordComplete ? "green" : "red") . "'>" .
             ($recordComplete ? "Complete" : "Incomplete") . "</td>";
 
         echo "<td align='center'" . ($paymentComplete ? "green" : "red") . "'>" .
