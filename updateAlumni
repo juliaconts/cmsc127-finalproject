@@ -1,0 +1,77 @@
+<?php
+<?php
+include 'DBConnector.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $alumniID = $conn->real_escape_string($_POST['alumniID']);
+    $studentID = $conn->real_escape_string($_POST['studentID']);
+    $firstName = $conn->real_escape_string($_POST['firstName']);
+    $middleName = $conn->real_escape_string($_POST['middleName']);
+    $lastName = $conn->real_escape_string($_POST['lastName']);
+    $status = $conn->real_escape_string($_POST['status']);
+    $upMail = $conn->real_escape_string($_POST['upMail']);
+    $yearLevel = $conn->real_escape_string($_POST['yearLevel']);
+    $university = $conn->real_escape_string($_POST['university']);
+    $degreeProgram = $conn->real_escape_string($_POST['degreeProgram']);
+    $contactNo = $conn->real_escape_string($_POST['contactNo']);
+    $presentAddress = $conn->real_escape_string($_POST['presentAddress']);
+    $homeAddress = $conn->real_escape_string($_POST['homeAddress']);
+    $birthday = $conn->real_escape_string($_POST['birthday']);
+    $signature = $conn->real_escape_string($_POST['signature']);
+    $idPicture = $conn->real_escape_string($_POST['idPicture']);
+    $form5 = $conn->real_escape_string($_POST['form5']);
+    $role = $conn->real_escape_string($_POST['role']); // Get the role from the form
+
+    // Update the member table
+    $sql = "UPDATE member SET
+            firstName = '$firstName',
+            middleName = '$middleName',
+            lastName = '$lastName',
+            status = '$status',
+            upMail = '$upMail',
+            yearLevel = '$yearLevel',
+            university = '$university',
+            degreeProgram = '$degreeProgram',
+            contactNo = '$contactNo',
+            presentAddress = '$presentAddress',
+            homeAddress = '$homeAddress',
+            birthday = '$birthday',
+            signature = '$signature',
+            idPicture = '$idPicture',
+            form5 = '$form5'
+            WHERE studentID = '$studentID'";
+
+    if ($conn->query($sql) === TRUE) {
+        // Update the assigned table. Check if a role is already assigned.
+        $checkSql = "SELECT COUNT(*) FROM assigned WHERE studentID = '$studentID'";
+        $checkResult = $conn->query($checkSql);
+        $count = $checkResult->fetch_row()[0];
+
+        // Get the roleID from the roles table based on the role name.
+        $getRoleIdSql = "SELECT roleID FROM roles WHERE role = '$role'";
+        $roleIdResult = $conn->query($getRoleIdSql);
+
+        if ($roleIdResult && $roleIdResult->num_rows > 0) {
+            $roleIdRow = $roleIdResult->fetch_assoc();
+            $roleId = $roleIdRow['roleID'];
+
+            if ($count > 0) {
+                // Update existing role assignment
+                $updateRoleSql = "UPDATE assigned SET roleID = '$roleId' WHERE studentID = '$studentID'";
+                $conn->query($updateRoleSql);
+            } else {
+                // Insert new role assignment (adjust acadYear and semester as needed)
+                $insertRoleSql = "INSERT INTO assigned (studentID, roleID, semester, acadYear) VALUES ('$studentID', '$roleId', 1, '2024-2025')";
+                $conn->query($insertRoleSql);
+            }
+        }
+
+        header("Location: homepage.php");
+        exit();
+    } else {
+        echo "Error updating alumni record: " . $conn->error;
+    }
+
+    $conn->close();
+}
+?>

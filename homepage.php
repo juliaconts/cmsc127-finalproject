@@ -27,7 +27,14 @@
                         <option value="22_23">A.Y. 2022-2023</option>
                 </select>
             </form>
-            <button class="add" type=submit> Add </button>
+            <form action='addMemberDetails.php' method='post'>
+                    <input type='text' style='display: none;' name='studentID' value='".$row["studentID"]."'>
+                    <button type='button' onclick='this.form.submit()'>Add Member</button>
+            </form>
+            <form action='addAdvisorDetails.php' method='post'>
+                    <input type='text' style='display: none;' name='advisorID' value='".$row["studentID"]."'>
+                    <button type='button' onclick='this.form.submit()'>Add Advisor</button>
+            </form>
         </div>
 
         <div class= "right-controls">
