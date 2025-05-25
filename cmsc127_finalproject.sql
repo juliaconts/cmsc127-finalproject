@@ -120,7 +120,7 @@ CREATE TABLE `assigned` (
   `roleID` int(11) NOT NULL,
   `studentID` int(11) NOT NULL,
   `status` varchar(30) DEFAULT NULL,
-  `yearLevel` int(1) DEFAULT NULL,
+  `yearLevel` int(2) DEFAULT NULL,
   `contactNo` int(11) DEFAULT NULL,
   `presentAddress` varchar(100) DEFAULT NULL,
   `form5` varchar(500) DEFAULT NULL
@@ -131,24 +131,33 @@ CREATE TABLE `assigned` (
 --
 
 INSERT INTO `assigned` (`semester`, `acadYear`, `roleID`, `studentID`, `status`, `yearLevel`, `contactNo`, `presentAddress`, `form5`) VALUES
-(1, '2023-2024', 10, 201799001, 'Alumni', NULL, 2147483647, 'Yokohama', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
-(1, '2023-2024', 2, 201799018, 'Alumni', NULL, 214748364, 'Iloilo', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
-(1, '2023-2024', 1, 202101829, 'Shiftee', 1, 214748364, 'Iloilo', NULL),
-(1, '2023-2024', 2, 202300102, 'Transferee', 1, 214748364, 'Iloilo', NULL),
-(1, '2023-2024', 9, 202309989, 'Regular', 1, 214748364, NULL, NULL),
-(1, '2023-2024', 3, 202350056, 'Irregular', 1, 214748364, NULL, NULL),
-(1, '2024-2025', 1, 202101829, 'Shiftee', 2, 214748364, 'Iloilo', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
-(1, '2024-2025', 5, 202300102, 'Transferee', 2, 214748364, 'Iloilo', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
-(1, '2024-2025', 8, 202309989, 'Regular', 2, 214748364, NULL, NULL),
-(1, '2024-2025', 4, 202350056, 'Irregular', 2, 214748364, NULL, NULL),
-(2, '2023-2024', 1, 202101829, 'Shiftee', 1, 214748364, 'Iloilo', NULL),
-(2, '2023-2024', 2, 202300102, 'Transferee', 1, 214748364, 'Iloilo', NULL),
-(2, '2023-2024', 9, 202309989, 'Regular', 1, 214748364, NULL, NULL),
-(2, '2023-2024', 3, 202350056, 'Irregular', 1, 214748364, NULL, NULL),
-(2, '2024-2025', 1, 202101829, 'Shiftee', 2, 214748364, 'Iloilo', NULL),
-(2, '2024-2025', 5, 202300102, 'Transferee', 2, 214748364, NULL, NULL),
-(2, '2024-2025', 8, 202309989, 'Regular', 2, 214748364, NULL, 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
-(2, '2024-2025', 4, 202350056, 'Irregular', 2, 214748364, 'Iloilo', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing');
+(1, '2023-2024', 11, 201799001,'Regular', 4, '09999999901', 'Balay Miagos, UPV', 'https://google.com'),
+(1, '2023-2024', 1, 201799018,'Regular', 4, '09189999918', 'Banwa, Miagao', 'https://google.com'),
+(2, '2023-2024', 11, 201799001, 'Regular', 4, '09999999901', 'Balay Miagos, UPV', 'https://google.com'),
+(2, '2023-2024', 1, 201799018, 'Regular', 4, '09189999918', 'Banwa, Miagao',  'https://google.com'),
+
+(1, '2024-2025', 11, 201799001, 'Alumni', NULL, '09999999901', 'Yokohama, Japan', 'https://google.com'),
+(1, '2024-2025', 3, 201799018, 'Alumni', NULL, '09189999918', 'Yokohama, Japan', 'https://google.com'),
+(2, '2024-2025', 11, 201799001, 'Alumni', NULL, '09999999901', 'Yokohama, Japan', 'https://google.com'),
+(2, '2024-2025', 3, 201799018, 'Alumni', NULL, '09189999918', 'Yokohama, Japan', 'https://google.com'),
+
+(1, '2023-2024', 17, 202101829, 'Shiftee', 1, '09999999901', 'Iloilo', NULL),
+(1, '2023-2024', 17, 202300102, 'Transferee', 1, '09686474839', 'Iloilo', NULL),
+(1, '2023-2024', 8, 202309989, 'Regular', 1, '09999999901', NULL, NULL),
+(2, '2023-2024', 17, 202101829, 'Shiftee', 1, '09999999901', 'Iloilo', NULL),
+(2, '2023-2024', 1, 202300102, 'Transferee', 1, '09686474839', 'Iloilo', NULL),
+(2, '2023-2024', 8, 202309989, 'Regular', 1, '09999999901', NULL, NULL),
+(2, '2023-2024', 2, 202350056, 'Irregular', 1, '09999999901', NULL, NULL),
+
+(1, '2023-2024', 2, 202350056, 'Irregular', 1, '09999999901', NULL, NULL),
+(1, '2024-2025', 17, 202101829, 'Shiftee', 2, '09123456789', 'Balay Lampirong, UPV', 'https://google.com'),
+(1, '2024-2025', 4, 202300102, 'Transferee', 2, '09999999901', 'Iloilo', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
+(1, '2024-2025', 7, 202309989, 'Regular', 2, '09999999901', NULL, NULL),
+(1, '2024-2025', 3, 202350056, 'Irregular', 2, '09999999901', NULL, NULL),
+(2, '2024-2025', 17, 202101829, 'Shiftee', 2, '09999999901', 'Iloilo', NULL),
+(2, '2024-2025', 4, 202300102, 'Transferee', 2, '09686474839', NULL, NULL),
+(2, '2024-2025', 7, 202309989, 'Regular', 2, '09999999901', NULL, 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
+(2, '2024-2025', 3, 202350056, 'Irregular', 2, '09999999901', 'Iloilo', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing');
 
 -- --------------------------------------------------------
 

@@ -1,6 +1,13 @@
 <?php
 include_once 'DBConnector.php';
 
+// for sorting
+include 'sort_config.php';
+$sort = $_GET['sort4By'] ?? 'none';
+if ($sort === 'pay-reqs' or $sort ==='soa-reqs')    $sortBy = ''; // no SQL ordering, do PHP sorting only
+else                                                $sortBy = $allowed[$sort];
+// 
+
 $sql = sprintf(
     "SELECT m.studentID,
         m.firstName,
@@ -24,13 +31,15 @@ $sql = sprintf(
             AND p.acadYear = a.acadYear 
             AND p.semester = a.semester
         WHERE a.yearLevel = 4 AND a.acadYear = '%s' AND a.semester = '%s'
-        GROUP BY m.studentID, m.firstName, m.lastName, m.middleName, 
-                 a.status, m.upMail, a.contactNo, a.presentAddress, 
-                 m.homeAddress, m.signature, m.idPicture, a.form5, r.role
-        ORDER BY m.lastName ASC",
-        mysqli_real_escape_string($conn, $acadYear),
+        GROUP BY m.studentID, m.lastName, m.firstName, m.middleName, r.role, a.status",
+mysqli_real_escape_string($conn, $acadYear),
         mysqli_real_escape_string($conn, $semester));
  
+// for sorting non pay or soa reqs
+if ($sortBy !== '') {
+    $sql .= "  ORDER BY $sortBy";
+}
+
  $result =$conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
@@ -56,20 +65,20 @@ if ($result && $result->num_rows > 0) {
                 "<td align='center'>".$row["role"]."</td>".
                 "<td align='center'>".$row["status"]."</td>";
 
-        echo "<td align='center'" . ($recordComplete ? "green" : "red") . "'>" .
+        echo "<td align='center' style='color:" . ($recordComplete ? "white" : "red") . "'>" .
             ($recordComplete ? "Complete" : "Incomplete") . "</td>";
 
-        echo "<td align='center'" . ($paymentComplete ? "green" : "red") . "'>" .
+        echo "<td align='center' style='color:" . ($paymentComplete ? "white" : "red") . "'>" .
             ($paymentComplete ? "Complete" : "Incomplete") . "</td>";
 
 
         echo "<td align='center'>".
                 "<div style='display: flex; gap: 5px;  justify-content: center'>".
-                    "<form action='editPerson.php' method='post'>".
+                    "<form action='editStudent.php' method='post'>".
                         "<input type='text' style='display: none;' name='studentID' value='".$row["studentID"]."'>".
                         "<button type='button' onclick='this.form.submit()'>Edit</button>".
                     "</form>".
-                    "<form action='deletePerson.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
+                    "<form action='deleteMember.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
                         "<input type='text' style='display: none;' name='studentID' value='".$row["studentID"]."'>".
                         "<button type='submit'>Delete</button>".
                     "</form>".

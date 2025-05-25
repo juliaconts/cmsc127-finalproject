@@ -1,20 +1,27 @@
 <?php
 include_once 'DBConnector.php';
 
+// for sorting
+include 'sort_config.php';
+$sort = $_GET['sortAlumBy'] ?? 'none';
+$sortBy = $allowed[$sort];
+// 
+
 $sql = sprintf(
     "SELECT m.studentID,
             m.firstName,
             m.lastName,
             m.middleName,
             a.alumniID
-    FROM assigned
-    INNER JOIN member m ON assigned.studentID = m.studentID
-    INNER JOIN alumni a ON m.studentID = a.studentID
-    WHERE assigned.status = 'Alumni' AND assigned.acadYear = '%s' AND assigned.semester = '%s'
-    GROUP BY m.studentID, m.firstName, m.lastName, m.middleName, a.alumniID",
-        mysqli_real_escape_string($conn, $acadYear),
+            FROM assigned
+            INNER JOIN member m ON assigned.studentID = m.studentID
+            INNER JOIN alumni a ON m.studentID = a.studentID
+            WHERE assigned.status = 'Alumni' AND assigned.acadYear = '%s' AND assigned.semester = '%s'
+            GROUP BY m.studentID, a.alumniID, m.firstName, m.lastName, m.middleName
+            ORDER BY $sortBy",
+mysqli_real_escape_string($conn, $acadYear),
         mysqli_real_escape_string($conn, $semester));
- 
+
  $result =$conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -28,11 +35,11 @@ if ($result->num_rows > 0) {
 
         echo "<td align='center'>".
                 "<div style='display: flex; gap: 5px;  justify-content: center'>".
-                    "<form action='editPerson.php' method='post'>".
+                    "<form action='editAlumni.php' method='post'>".
                         "<input type='text' style='display: none;' name='alumniID' value='".$row["alumniID"]."'>".
                         "<button type='button' onclick='this.form.submit()'>Edit</button>".
                     "</form>".
-                    "<form action='deletePerson.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
+                    "<form action='deleteMember.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
                         "<input type='text' style='display: none;' name='alumniID' value='".$row["alumniID"]."'>".
                         "<button type='submit'>Delete</button>".
                     "</form>".
