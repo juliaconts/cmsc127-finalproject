@@ -47,7 +47,7 @@ if ($result && $result->num_rows > 0) {
             !empty($row['form5'])
         );
 
-        $paymentComplete = ($row['paidPayments'] == 3);
+        $paymentComplete = ($row['totalPayments'] > 0 && $row['paidPayments'] == $row['totalPayments']);
         $fullName = $row["lastName"] . ", " . $row["firstName"] . " " . $row["middleName"];
 
         echo "<tr>".
