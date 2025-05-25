@@ -20,7 +20,7 @@ $sql = "SELECT m.studentID,
         LEFT JOIN pays p ON m.studentID = p.studentID
         LEFT JOIN assigned a ON m.studentID = a.studentID
         LEFT JOIN roles r ON a.roleID = r.roleID
-        WHERE m.yearLevel = 1
+        WHERE m.yearLevel = 4
         GROUP BY m.studentID";
 
 $result =$conn->query($sql);
@@ -61,7 +61,7 @@ if ($result && $result->num_rows > 0) {
                         "<input type='text' style='display: none;' name='studentID' value='".$row["studentID"]."'>".
                         "<button type='button' onclick='this.form.submit()'>Edit</button>".
                     "</form>".
-                    "<form action='deletePerson.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
+                    "<form action='deleteMember.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
                         "<input type='text' style='display: none;' name='studentID' value='".$row["studentID"]."'>".
                         "<button type='submit'>Delete</button>".
                     "</form>".

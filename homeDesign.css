@@ -47,8 +47,13 @@ h2 {
     color: rgb(58, 58, 58)
 }
 
-.add {
-    padding: 1px 10px;
+.addMember {
+    padding: 10px 40px;
+    font-size: 15px;
+}
+
+.addAdvisor {
+    padding: 10px 40px;
     font-size: 15px;
 }
 
