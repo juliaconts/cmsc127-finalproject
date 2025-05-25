@@ -168,18 +168,18 @@ CREATE TABLE `assigned` (
 --
 
 INSERT INTO `assigned` (`semester`, `acadYear`, `roleID`, `studentID`, `yearLevel`, `status`, `contactNo`, `presentAddress`, `form5`) VALUES
-(1, '2023-2024', 11, 201799001, 4, `Regular`, `09999999901`, `Balay Miagos, UPV`, `https://google.com`),
-(2, '2023-2024', 11, 201799001, 4, `Regular`, `09999999901`, `Balay Miagos, UPV`, `https://google.com`),
-(2, '2023-2024', 3, 201799018, 4, `Regular`, `09189999918`, `Banwa, Miagao`,  `https://google.com`),
-(1, '2024-2025', 11, 201799001, NULL, `Alumni`, `09999999901`, `Yokohama, Japan`, `https://google.com`),
-(1, '2024-2025', 3, 201799018, NULL, `Alumni`, `09189999918`, `Yokohama, Japan`, `https://google.com`),
-(1, '2024-2025', 17, 202101829, 2, `Regular`, `09123456789`, `Balay Lampirong, UPV`, `https://google.com`),
-(1, '2024-2025', 4, 202300102, 2, `Irregular`, `09686474839`, `Balay Gumamela, UPV`, `https://google.com`),
-(1, '2024-2025', 7, 202309989, 2, `Shiftee`, `09123456789`, `Sapa, Miagao`, `https://google.com`),
-(2, '2024-2025', 17, 202101829, 2, `Regular`, `09123456789`, `Balay Lampirong, UPV`, `https://google.com`),
-(2, '2024-2025', 4, 202300102, 2, `Irregular`, `09686474839`, `Balay Gumamela, UPV`, `https://google.com`),
-(2, '2024-2025', 7, 202309989, 2, `Shiftee`, `09123456789`, `Sapa, Miagao`, `https://google.com`),
-(2, '2024-2025', 3, 202350056, 2, `Transferee`, `09123456789`, `Balay Apitong, UPV`, `https://google.com`);
+(1, '2023-2024', 11, 201799001, 4, `Regular', '09999999901', 'Balay Miagos, UPV', 'https://google.com'),
+(2, '2023-2024', 11, 201799001, 4, 'Regular', '09999999901', 'Balay Miagos, UPV', 'https://google.com'),
+(2, '2023-2024', 3, 201799018, 4, 'Regular', '09189999918', 'Banwa, Miagao, UPV',  'https://google.com'),
+(1, '2024-2025', 11, 201799001, NULL, 'Alumni', '09999999901', 'Yokohama, Japan', 'https://google.com'),
+(1, '2024-2025', 3, 201799018, NULL, 'Alumni', '09189999918', 'Yokohama, Japan', 'https://google.com'),
+(1, '2024-2025', 17, 202101829, 2, 'Regular', '09123456789', 'Balay Lampirong, UPV', 'https://google.com'),
+(1, '2024-2025', 4, 202300102, 2, 'Irregular', '09686474839', 'Balay Gumamela, UPV', 'https://google.com'),
+(1, '2024-2025', 7, 202309989, 2, 'Shiftee', '09123456789', 'Sapa, Miagao', 'https://google.com'),
+(2, '2024-2025', 17, 202101829, 2, 'Regular', '09123456789', 'Balay Lampirong, UPV', 'https://google.com'),
+(2, '2024-2025', 4, 202300102, 2, 'Irregular', '09686474839', 'Balay Gumamela, UPV', 'https://google.com'),
+(2, '2024-2025', 7, 202309989, 2, 'Shiftee', '09123456789', 'Sapa, Miagao', 'https://google.com'),
+(2, '2024-2025', 3, 202350056, 2, 'Transferee', '09123456789', 'Balay Apitong, UPV', 'https://google.com');
 
 -- --------------------------------------------------------
 
