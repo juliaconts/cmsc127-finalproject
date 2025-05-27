@@ -1,3 +1,3 @@
 <?php
-generateDropdown($conn, "SELECT DISTINCT semester FROM academicyear ORDER BY semester ASC", $semester, 'semester');
+generateDropdown($conn, "SELECT DISTINCT semester FROM academicyear WHERE acadYear = '$acadYear' ORDER BY semester ASC", $semester, 'semester');
 ?>

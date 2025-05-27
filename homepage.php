@@ -96,9 +96,9 @@ if (empty($semester)){
                         <option value="alphabet-asc">A-Z</option>
                         <option value="alphabet-desc">Z-A</option>
                         <option value="adv-role">Role</option>
-                        <option value="adv-acadYear">Academic Year</option>
                 </select>
             </form>
+
         </div>
     </div>
 
@@ -145,7 +145,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th>Missing Reqs</th>
                     <th></th>
                 </tr>
             <?php
@@ -181,7 +181,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
@@ -217,7 +217,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
@@ -252,7 +252,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
@@ -287,7 +287,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php

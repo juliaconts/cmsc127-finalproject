@@ -7,15 +7,14 @@ $sort = $_GET['sortAdvBy'] ?? 'none';
 $sortAdvBy = $allowed[$sort] ?? 'acadYear DESC, semester ASC, type ASC';
 //
 
-$sql = sprintf("
-        SELECT DISTINCT advisor.advisorID, firstName, middleInitial, lastName, advises.type, advises.acadYear, advises.semester
+$sql = sprintf("SELECT DISTINCT advisor.advisorID, firstName, middleInitial, lastName, advises.type, advises.acadYear, advises.semester
         FROM advisor
         JOIN advises ON advisor.advisorID = advises.advisorID
-        WHERE advises.acadYear = '%s' AND advises.semester = '%s'
+        WHERE advises.acadYear = '%s' AND advises.semester = %d
         GROUP BY advisor.advisorID, advises.type
-        ORDER BY $sortAdvBy", 
-mysqli_real_escape_string($conn, $acadYear),
-        mysqli_real_escape_string($conn, $semester));
+        ORDER BY $sortAdvBy",
+        mysqli_real_escape_string($conn, $acadYear),
+        $semester);
 
 $result = $conn->query($sql);
 
