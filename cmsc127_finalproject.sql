@@ -309,8 +309,8 @@ INSERT INTO `roles` (`roleID`, `role`, `description`) VALUES
 (13, 'Publications Committee Member', 'Divided into three main sections: Creatives, Editors, and Social Media Managers. They shall help the PIOs with the creation of publication materials, editing, and handling the social media accounts of the organization.'),
 (14, 'Website Committee Member', 'Shall develop and maintain a strategic plan for the website that aligns with the organization’s mission and goals.'),
 (15, 'Public Relations Committee Member', 'Shall seek partnerships and collaborations with external organizations, sponsors, and other institutions.'),
-(16, 'Education and Research Committee Member', 'Shall be in charge of the overall educational development of the members of the organization and the formulation of the campaigns that the organization will soldier throughout the year.');
-(17, 'Member', 'Is a person who has been officially enrolled in at least 3.0 units worth of Computer Science (CMSC) or equivalent courses. They shall have the rights to participate in all events held by the UPV Komsai.Org.'),
+(16, 'Education and Research Committee Member', 'Shall be in charge of the overall educational development of the members of the organization and the formulation of the campaigns that the organization will soldier throughout the year.'),
+(17, 'Member', 'Is a person who has been officially enrolled in at least 3.0 units worth of Computer Science (CMSC) or equivalent courses. They shall have the rights to participate in all events held by the UPV Komsai.Org.');
 
 -- --------------------------------------------------------
 
