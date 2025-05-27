@@ -42,48 +42,63 @@ if (empty($semester)){
 	    </header>
         <hr>
 
-    <!-- top buttons -->
-    <div class="top-bar">
+    <!-- Top bar with Add buttons, left-controls, and right-controls side by side -->
+    <div class="top-bar" style="display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: flex-end; gap: 30px;">
 
-    <div class="left-controls">
-        <form name="filterAYSem" method="get" id="filterAYSem" action="homepage.php">
-            <label for="acadYear">Academic Year </label>
-            <select name="acadYear" id="AY">
-                <?php include 'allAcadYear.php'; ?>
-            </select>
-            <label for="semester">Semester:</label>
-            <select name="semester" id="semester">
-                <?php include 'semester.php'; ?>
-            </select>
-        </form>
-    </div>
+            <div class="left-controls">
+            <form name="filterAYSem" method="get" id="filterAYSem" action="homepage.php">
+                <label for="acadYear">Academic Year </label>
+                <select name="acadYear" id="AY">
+                    <?php include 'allAcadYear.php'; ?>
+                </select>
+                <label for="semester">Semester:</label>
+                <select name="semester" id="semester">
+                    <?php include 'semester.php'; ?>
+                </select>
+            </form>
+            </div>
+        </div>
 
-        <div class= "right-controls">
+        <div class="right-controls">
+            <div class="top-actions" style="display: flex; gap: 10px;">
+                <a href="addMemberDetails.php">
+                    <button type="button" style="background-color: #0049AD; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Add Member
+                    </button>
+                </a>
+                <a href="addAdvisorDetails.php">
+                    <button type="button" style="background-color: #001E47; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Add Advisor
+                    </button>
+                </a>
+            </div>
             <form action="">
                 <input type="text" placeholder="Search">
-             </form>
+            </form>
         </div>
     </div>
 
         
-    <!-- Display of data -->
-     <br>
+    <!-- Display for search -->
+    <div class="search">
+        <!-- for shen to add whoever comes up in the search -->
+    </div>
 
     <!--Advisor display-->
      <div class="container">
         <h2>Advisor</h2>
         
         <div class="dropDowns">
-            <form action=" ">
-                <select name="sortBy" id="sort">
+            <form action="homepage.php" method="GET">
+                <select name="sortAdvBy" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                         <option value="none" selected disabled hidden>Sort by</option>
-                        <option value="roles">Roles</option>
-                        <option value="status">Status </option>
-                        <option value="add sort">add sort</option>
-                        <option value="add sort">add sort</option>
+                        <option value="alphabet-asc">A-Z</option>
+                        <option value="alphabet-desc">Z-A</option>
+                        <option value="adv-role">Role</option>
+                        <option value="adv-acadYear">Academic Year</option>
                 </select>
             </form>
-
         </div>
     </div>
 
@@ -109,13 +124,14 @@ if (empty($semester)){
             <h2>1st Year</h2>
         
             <div class="dropDowns">
-                <form action=" ">
-                    <select name="sortBy" id="sort">
+                <form action="homepage.php" method="GET">
+                    <select name="sort1By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
-                            <option value="roles">Roles</option>
-                            <option value="status">Status </option>
-                            <option value="add sort">add sort</option>
-                            <option value="add sort">add sort</option>
+                            <option value="alphabet-asc">A-Z</option>
+                            <option value="alphabet-desc">Z-A</option>
+                            <option value="role">Role</option>
+                            <option value="status">Status</option>
+                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
             </div>
@@ -144,16 +160,16 @@ if (empty($semester)){
             <h2>2nd Year</h2>
         
             <div class="dropDowns">
-                <form action=" ">
-                    <select name="sortBy" id="sort">
+                <form action="homepage.php" method="GET">
+                    <select name="sort2By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
-                            <option value="roles">Roles</option>
-                            <option value="status">Status </option>
-                            <option value="add sort">add sort</option>
-                            <option value="add sort">add sort</option>
+                            <option value="alphabet-asc">A-Z</option>
+                            <option value="alphabet-desc">Z-A</option>
+                            <option value="role">Role</option>
+                            <option value="status">Status</option>
+                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
-
             </div>
         </div>
 
@@ -180,13 +196,14 @@ if (empty($semester)){
             <h2>3rd Year</h2>
             
             <div class="dropDowns">
-                <form action=" ">
-                    <select name="sortBy" id="sort">
+                <form action="homepage.php" method="GET">
+                    <select name="sort3By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
-                            <option value="roles">Roles</option>
-                            <option value="status">Status </option>
-                            <option value="add sort">add sort</option>
-                            <option value="add sort">add sort</option>
+                            <option value="alphabet-asc">A-Z</option>
+                            <option value="alphabet-desc">Z-A</option>
+                            <option value="role">Role</option>
+                            <option value="status">Status</option>
+                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
             </div>
@@ -214,17 +231,16 @@ if (empty($semester)){
        <div class="container">
             <h2>4th Year</h2>
             
-            <div class="dropDowns">
-                <form action=" ">
-                    <select name="sortBy" id="sort">
+                <form action="homepage.php" method="GET">
+                    <select name="sort4By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
-                            <option value="roles">Roles</option>
-                            <option value="status">Status </option>
-                            <option value="add sort">add sort</option>
-                            <option value="add sort">add sort</option>
+                            <option value="alphabet-asc">A-Z</option>
+                            <option value="alphabet-desc">Z-A</option>
+                            <option value="role">Role</option>
+                            <option value="status">Status</option>
+                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
-
             </div>
         </div>
 
@@ -250,17 +266,16 @@ if (empty($semester)){
         <div class="container">
             <h2>Nth Year</h2>
             
-            <div class="dropDowns">
-                <form action=" ">
-                    <select name="sortBy" id="sort">
+                <form action="homepage.php" method="GET">
+                    <select name="sortNthBy" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
-                            <option value="roles">Roles</option>
-                            <option value="status">Status </option>
-                            <option value="add sort">add sort</option>
-                            <option value="add sort">add sort</option>
+                            <option value="alphabet-asc">A-Z</option>
+                            <option value="alphabet-desc">Z-A</option>
+                            <option value="role">Role</option>
+                            <option value="status">Status</option>
+                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
-
             </div>
         </div>
 
@@ -351,4 +366,12 @@ document.addEventListener("DOMContentLoaded", () => {
     semesterDropdown.addEventListener("change", () => handleSelectionChange(semesterDropdown, "selectedSemester"));
 });
 
+// restores scroll position after page load
+window.addEventListener("load", () => {
+    const y = sessionStorage.getItem('scrollY');
+    if (y !== null) {
+    window.scrollTo(0, y);
+    sessionStorage.removeItem('scrollY');
+    }
+});
 </script>

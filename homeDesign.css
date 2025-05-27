@@ -127,7 +127,7 @@ body {
 .scrollbox {
     background-color: #001E47;
     border: 2px solid #0049AD;
-    padding: 15px;
+    padding: 0px 15px 15px 15px;
     margin: 15px auto;
     width: 95%;
     height: 200px;
