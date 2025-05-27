@@ -129,7 +129,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th></th>
                     <th></th>
                 </tr>
             <?php
@@ -165,7 +165,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
@@ -200,7 +200,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
@@ -236,7 +236,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
@@ -272,7 +272,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Payment</th>
+                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
