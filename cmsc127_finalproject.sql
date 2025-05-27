@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 27, 2025 at 11:13 PM
+-- Generation Time: May 27, 2025 at 07:32 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -64,7 +64,6 @@ INSERT INTO `advises` (`advisorID`, `type`, `acadYear`, `semester`) VALUES
 (1, 'Co-Advisor', '2024-2025', 1),
 (1, 'Advisor', '2024-2025', 2),
 (2, 'Co-Advisor', '2024-2025', 2),
-(2, 'Advisor', '2025-2026', 1),
 (3, 'Advisor', '2023-2024', 1),
 (3, 'Advisor', '2023-2024', 2),
 (3, 'Advisor', '2024-2025', 1);
@@ -124,7 +123,7 @@ CREATE TABLE `assigned` (
   `studentID` int(11) NOT NULL,
   `status` varchar(30) DEFAULT NULL,
   `yearLevel` int(1) DEFAULT NULL,
-  `contactNo` int(11) DEFAULT NULL,
+  `contactNo` varchar(11) DEFAULT NULL,
   `presentAddress` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -133,25 +132,28 @@ CREATE TABLE `assigned` (
 --
 
 INSERT INTO `assigned` (`semester`, `acadYear`, `roleID`, `studentID`, `status`, `yearLevel`, `contactNo`, `presentAddress`) VALUES
-(1, '2023-2024', 17, 201799001, 'Alumni', NULL, 2147483647, 'Yokohama'),
-(1, '2023-2024', 17, 201799018, 'Alumni', NULL, 214748364, 'Iloilo'),
-(1, '2023-2024', 17, 202101829, 'Shiftee', 1, 214748364, 'Iloilo'),
-(1, '2023-2024', 17, 202300102, 'Transferee', 2, 214748364, 'Iloilo'),
-(1, '2023-2024', 17, 202309989, 'Regular', 3, 214748364, NULL),
-(1, '2023-2024', 17, 202350056, 'Irregular', 4, 214748364, NULL),
-(1, '2024-2025', 17, 202101829, 'Shiftee', 5, 214748364, 'Iloilo'),
-(1, '2024-2025', 17, 202300102, 'Transferee', 2, 214748364, 'Iloilo'),
-(1, '2024-2025', 17, 202309989, 'Regular', 2, 214748364, 'Iloilo'),
-(1, '2024-2025', 17, 202350056, 'Irregular', 2, 214748364, 'Iloilo'),
-(1, '2025-2026', 1, 202101829, 'Shiftee', 1, NULL, NULL),
-(2, '2023-2024', 17, 202101829, 'Shiftee', 1, 214748364, 'Iloilo'),
-(2, '2023-2024', 17, 202300102, 'Transferee', 1, 214748364, 'Iloilo'),
-(2, '2023-2024', 17, 202309989, 'Regular', 1, 214748364, ''),
-(2, '2023-2024', 17, 202350056, 'Irregular', 1, 214748364, ''),
-(2, '2024-2025', 17, 202101829, 'Shiftee', 2, 214748364, 'Iloilo'),
-(2, '2024-2025', 17, 202300102, 'Transferee', 2, 214748364, 'Iloilo'),
-(2, '2024-2025', 17, 202309989, 'Regular', 2, 214748364, ''),
-(2, '2024-2025', 17, 202350056, 'Irregular', 2, 214748364, '');
+(1, '2023-2024', 17, 201799001, 'Alumni', NULL, '09999999901', 'Yokohama'),
+(1, '2023-2024', 17, 201799018, 'Alumni', NULL, '09999999901', 'Iloilo'),
+(1, '2023-2024', 17, 202101829, 'Shiftee', 1, '09999999901', 'Iloilo'),
+(1, '2023-2024', 17, 202300102, 'Transferee', 1, '09999999901', 'Iloilo'),
+(1, '2023-2024', 17, 202309989, 'Regular', 1, '09999999901', NULL),
+(1, '2023-2024', 17, 202350056, 'Irregular', 1, '09999999901', NULL),
+(1, '2024-2025', 17, 202101829, 'Shiftee', 3, '09999999901', 'Iloilo'),
+(1, '2024-2025', 17, 202300102, 'Transferee', 3, '09999999901', 'Iloilo'),
+(1, '2024-2025', 17, 202309989, 'Regular', 3, '09999999901', ''),
+(1, '2024-2025', 17, 202350056, 'Irregular', 3, '09999999901', ''),
+(1, '2025-2026', 17, 202101829, 'Shiftee', 5, '09999999901', 'Iloilo'),
+(1, '2025-2026', 17, 202300102, 'Transferee', 5, '09999999901', 'Iloilo'),
+(1, '2025-2026', 17, 202309989, 'Regular', 5, '09999999901', ''),
+(1, '2025-2026', 17, 202350056, 'Irregular', 5, '09999999901', ''),
+(2, '2023-2024', 17, 202101829, 'Shiftee', 2, '09999999901', 'Iloilo'),
+(2, '2023-2024', 17, 202300102, 'Transferee', 2, '09999999901', 'Iloilo'),
+(2, '2023-2024', 17, 202309989, 'Regular', 2, '''09999999901''', ''),
+(2, '2023-2024', 17, 202350056, 'Irregular', 2, '09999999901', ''),
+(2, '2024-2025', 17, 202101829, 'Shiftee', 4, '09999999901', 'Iloilo'),
+(2, '2024-2025', 17, 202300102, 'Transferee', 4, '09999999901', 'Iloilo'),
+(2, '2024-2025', 17, 202309989, 'Regular', 4, '09999999901', ''),
+(2, '2024-2025', 17, 202350056, 'Irregular', 4, '09999999901', '');
 
 -- --------------------------------------------------------
 
@@ -179,17 +181,20 @@ INSERT INTO `form5` (`acadYear`, `semester`, `studentID`, `form5`) VALUES
 ('2023-2024', 2, 202350056, NULL),
 ('2024-2025', 1, 201799001, NULL),
 ('2024-2025', 1, 201799018, NULL),
-('2024-2025', 1, 202101829, '1'),
-('2024-2025', 1, 202300102, '1'),
-('2024-2025', 1, 202309989, '1'),
-('2024-2025', 1, 202350056, '1'),
+('2024-2025', 1, 202101829, NULL),
+('2024-2025', 1, 202300102, NULL),
+('2024-2025', 1, 202309989, NULL),
+('2024-2025', 1, 202350056, NULL),
 ('2024-2025', 2, 201799001, NULL),
 ('2024-2025', 2, 201799018, NULL),
 ('2024-2025', 2, 202101829, NULL),
 ('2024-2025', 2, 202300102, NULL),
 ('2024-2025', 2, 202309989, NULL),
 ('2024-2025', 2, 202350056, NULL),
-('2025-2026', 1, 202101829, NULL);
+('2025-2026', 1, 202101829, NULL),
+('2025-2026', 1, 202300102, NULL),
+('2025-2026', 1, 202309989, NULL),
+('2025-2026', 1, 202350056, NULL);
 
 -- --------------------------------------------------------
 
@@ -218,7 +223,7 @@ CREATE TABLE `member` (
 INSERT INTO `member` (`studentID`, `firstName`, `middleName`, `lastName`, `upMail`, `university`, `degreeProgram`, `homeAddress`, `birthday`, `signature`, `idPicture`) VALUES
 (201799001, 'Karen', 'Koyama', 'Aijo', 'kkaijo@up.edu.ph', 'University of the Philippines - Visayas', 'BS in Computer Science', 'Yokohama, Japan', '2001-09-27', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
 (201799018, 'Maya', 'Tomita', 'Tendo', 'mmtendo@up.edu.ph', 'University of the Philippines - Visayas', 'BS in Computer Science', 'Yokohama, Japan', '2001-07-24', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
-(202101829, 'Myra', 'Sumagaysay', 'Verde', 'msverde@up.edu.ph', 'University of the Philippines - Visayas', 'BS in Computer Science', NULL, '2003-02-27', NULL, NULL),
+(202101829, 'Myra', 'Sumagaysay', 'Verde', 'msverde@up.edu.ph', 'University of the Philippines - Visayas', 'BS in Computer Science', 'Lambunao, Iloilo', '2003-02-27', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
 (202300102, 'Hansen Maeve', 'Calago', 'Quindao', 'hcquindao@up.edu.ph', 'University of the Philippines - Visayas', 'BS in Computer Science', 'Mandurriao, Iloilo', '2004-08-09', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
 (202309989, 'Nina Claudia', 'Escorpiso', 'Del Rosario', 'nedelrosario@up.edu.ph', 'University of the Philippines - Visayas', 'BS in Computer Science', 'Narra, Palawan', '2005-04-29', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing'),
 (202350056, 'Julia Louise', 'Miclat', 'Contreras', 'jmcontreras3@up.edu.ph', 'University of the Philippines - Visayas', 'BS in Computer Science', 'Molo, Iloilo City', '2004-08-18', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing', 'https://docs.google.com/spreadsheets/d/1IbPbL6lmFFrFSHwCf96ecVwpHt6ef_rYOPfMHzVwB7M/edit?usp=sharing');
