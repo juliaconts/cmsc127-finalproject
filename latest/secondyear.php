@@ -1,6 +1,6 @@
 <?php
 include_once 'DBConnector.php';
-include 'filter.php';
+// include 'filter.php';
 
 $sql = sprintf(
     "SELECT m.studentID,
