@@ -123,7 +123,7 @@ CREATE TABLE `assigned` (
   `studentID` int(11) NOT NULL,
   `status` varchar(30) DEFAULT NULL,
   `yearLevel` int(1) DEFAULT NULL,
-  `contactNo` int(11) DEFAULT NULL,
+  `contactNo` varchar(11) DEFAULT NULL,
   `presentAddress` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -132,28 +132,28 @@ CREATE TABLE `assigned` (
 --
 
 INSERT INTO `assigned` (`semester`, `acadYear`, `roleID`, `studentID`, `status`, `yearLevel`, `contactNo`, `presentAddress`) VALUES
-(1, '2023-2024', 17, 201799001, 'Alumni', NULL, 2147483647, 'Yokohama'),
-(1, '2023-2024', 17, 201799018, 'Alumni', NULL, 214748364, 'Iloilo'),
-(1, '2023-2024', 17, 202101829, 'Shiftee', 1, 214748364, 'Iloilo'),
-(1, '2023-2024', 17, 202300102, 'Transferee', 1, 214748364, 'Iloilo'),
-(1, '2023-2024', 17, 202309989, 'Regular', 1, 214748364, NULL),
-(1, '2023-2024', 17, 202350056, 'Irregular', 1, 214748364, NULL),
-(1, '2024-2025', 17, 202101829, 'Shiftee', 3, 214748364, 'Iloilo'),
-(1, '2024-2025', 17, 202300102, 'Transferee', 3, 214748364, 'Iloilo'),
-(1, '2024-2025', 17, 202309989, 'Regular', 3, 214748364, ''),
-(1, '2024-2025', 17, 202350056, 'Irregular', 3, 214748364, ''),
-(1, '2025-2026', 17, 202101829, 'Shiftee', 5, 214748364, 'Iloilo'),
-(1, '2025-2026', 17, 202300102, 'Transferee', 5, 214748364, 'Iloilo'),
-(1, '2025-2026', 17, 202309989, 'Regular', 5, 214748364, ''),
-(1, '2025-2026', 17, 202350056, 'Irregular', 5, 214748364, ''),
-(2, '2023-2024', 17, 202101829, 'Shiftee', 2, 214748364, 'Iloilo'),
-(2, '2023-2024', 17, 202300102, 'Transferee', 2, 214748364, 'Iloilo'),
-(2, '2023-2024', 17, 202309989, 'Regular', 2, 214748364, ''),
-(2, '2023-2024', 17, 202350056, 'Irregular', 2, 214748364, ''),
-(2, '2024-2025', 17, 202101829, 'Shiftee', 4, 214748364, 'Iloilo'),
-(2, '2024-2025', 17, 202300102, 'Transferee', 4, 214748364, 'Iloilo'),
-(2, '2024-2025', 17, 202309989, 'Regular', 4, 214748364, ''),
-(2, '2024-2025', 17, 202350056, 'Irregular', 4, 214748364, '');
+(1, '2023-2024', 17, 201799001, 'Alumni', NULL, '09999999901', 'Yokohama'),
+(1, '2023-2024', 17, 201799018, 'Alumni', NULL, '09999999901', 'Iloilo'),
+(1, '2023-2024', 17, 202101829, 'Shiftee', 1, '09999999901', 'Iloilo'),
+(1, '2023-2024', 17, 202300102, 'Transferee', 1, '09999999901', 'Iloilo'),
+(1, '2023-2024', 17, 202309989, 'Regular', 1, '09999999901', NULL),
+(1, '2023-2024', 17, 202350056, 'Irregular', 1, '09999999901', NULL),
+(1, '2024-2025', 17, 202101829, 'Shiftee', 3, '09999999901', 'Iloilo'),
+(1, '2024-2025', 17, 202300102, 'Transferee', 3, '09999999901', 'Iloilo'),
+(1, '2024-2025', 17, 202309989, 'Regular', 3, '09999999901', ''),
+(1, '2024-2025', 17, 202350056, 'Irregular', 3, '09999999901', ''),
+(1, '2025-2026', 17, 202101829, 'Shiftee', 5, '09999999901', 'Iloilo'),
+(1, '2025-2026', 17, 202300102, 'Transferee', 5, '09999999901', 'Iloilo'),
+(1, '2025-2026', 17, 202309989, 'Regular', 5, '09999999901', ''),
+(1, '2025-2026', 17, 202350056, 'Irregular', 5, '09999999901', ''),
+(2, '2023-2024', 17, 202101829, 'Shiftee', 2, '09999999901', 'Iloilo'),
+(2, '2023-2024', 17, 202300102, 'Transferee', 2, '09999999901', 'Iloilo'),
+(2, '2023-2024', 17, 202309989, 'Regular', 2, '''09999999901''', ''),
+(2, '2023-2024', 17, 202350056, 'Irregular', 2, '09999999901', ''),
+(2, '2024-2025', 17, 202101829, 'Shiftee', 4, '09999999901', 'Iloilo'),
+(2, '2024-2025', 17, 202300102, 'Transferee', 4, '09999999901', 'Iloilo'),
+(2, '2024-2025', 17, 202309989, 'Regular', 4, '09999999901', ''),
+(2, '2024-2025', 17, 202350056, 'Irregular', 4, '09999999901', '');
 
 -- --------------------------------------------------------
 
@@ -294,7 +294,6 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`roleID`, `role`, `description`) VALUES
-(17, 'Member', 'Is a person who has been officially enrolled in at least 3.0 units worth of Computer Science (CMSC) or equivalent courses. They shall have the rights to participate in all events held by the UPV Komsai.Org.'),
 (1, 'President', 'Shall lead the organization, have the power to make high-level decisions and execute all policies of the organization, and act as the official representative of the UPV Komsai.Org.'),
 (2, 'Vice President for Internal Affairs', 'Shall assist the President in their administrative functions, and shall focus on overseeing the internal happenings within UPV Komsai.Org. They shall automatically become the head of the Website Committee.'),
 (3, 'Vice President for External Affairs', 'Shall assist the President in their administrative functions, and shall focus on overseeing the external activities within UPV. They shall automatically become the head of the Public Relations Committee.'),
@@ -311,6 +310,7 @@ INSERT INTO `roles` (`roleID`, `role`, `description`) VALUES
 (14, 'Website Committee Member', 'Shall develop and maintain a strategic plan for the website that aligns with the organization’s mission and goals.'),
 (15, 'Public Relations Committee Member', 'Shall seek partnerships and collaborations with external organizations, sponsors, and other institutions.'),
 (16, 'Education and Research Committee Member', 'Shall be in charge of the overall educational development of the members of the organization and the formulation of the campaigns that the organization will soldier throughout the year.');
+(17, 'Member', 'Is a person who has been officially enrolled in at least 3.0 units worth of Computer Science (CMSC) or equivalent courses. They shall have the rights to participate in all events held by the UPV Komsai.Org.'),
 
 -- --------------------------------------------------------
 
