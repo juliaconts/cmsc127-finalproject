@@ -1,3 +1,28 @@
+<?php
+include_once 'DBConnector.php';
+
+$acadYear = $_GET['acadYear'] ?? '';
+$semester = $_GET['semester'] ?? '';
+
+$sql_latest = "SELECT acadYear, semester FROM academicyear ORDER BY acadYear DESC, semester DESC LIMIT 1";
+$result_latest = $conn->query($sql_latest);
+if ($result_latest->num_rows > 0) {
+    $latest = $result_latest->fetch_assoc();
+} else {
+    $latest = [
+        'acadYear' => '',
+        'semester' => ''
+    ];
+}
+
+if (empty($acadYear)) {
+    $acadYear = $latest['acadYear'];
+}
+if (empty($semester)){
+    $semester = $latest['semester'];
+}
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -19,23 +44,19 @@
 
     <!-- top buttons -->
     <div class="top-bar">
-        <div class="left-controls">
-            <form action=" ">
-                <select name="acadyear" id="AY">
-                        <option value="24_25">A.Y. 2024-2025</option>
-                        <option value="23_24">A.Y. 2023-2024</option>
-                        <option value="22_23">A.Y. 2022-2023</option>
-                </select>
-            </form>
-            <form action='addMemberDetails.php' method='post'>
-                    <input type='text' style='display: none;' name='studentID' value='".$row["studentID"]."'>
-                    <button type='button' onclick='this.form.submit()'>Add Member</button>
-            </form>
-            <form action='addAdvisorDetails.php' method='post'>
-                    <input type='text' style='display: none;' name='advisorID' value='".$row["studentID"]."'>
-                    <button type='button' onclick='this.form.submit()'>Add Advisor</button>
-            </form>
-        </div>
+
+    <div class="left-controls">
+        <form name="filterAYSem" method="get" id="filterAYSem" action="homepage.php">
+            <label for="acadYear">Academic Year </label>
+            <select name="acadYear" id="AY">
+                <?php include 'allAcadYear.php'; ?>
+            </select>
+            <label for="semester">Semester:</label>
+            <select name="semester" id="semester">
+                <?php include 'semester.php'; ?>
+            </select>
+        </form>
+    </div>
 
         <div class= "right-controls">
             <form action="">
@@ -63,15 +84,6 @@
                 </select>
             </form>
 
-            <form action=" ">
-                <select name="filterBy" id="filter">
-                        <option value="none" selected disabled hidden>Filter by</option>
-                        <option value="add filter">add filter</option>
-                        <option value="add filter">add filter</option>
-                        <option value="add filter">add filter</option>
-                        <option value="add filter">add filter</option>
-                </select>
-            </form>
         </div>
     </div>
 
@@ -104,16 +116,6 @@
                             <option value="status">Status </option>
                             <option value="add sort">add sort</option>
                             <option value="add sort">add sort</option>
-                    </select>
-                </form>
-
-                <form action=" ">
-                    <select name="filterBy" id="filter">
-                            <option value="none" selected disabled hidden>Filter by</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
                     </select>
                 </form>
             </div>
@@ -152,15 +154,6 @@
                     </select>
                 </form>
 
-                <form action=" ">
-                    <select name="filterBy" id="filter">
-                            <option value="none" selected disabled hidden>Filter by</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                    </select>
-                </form>
             </div>
         </div>
 
@@ -194,16 +187,6 @@
                             <option value="status">Status </option>
                             <option value="add sort">add sort</option>
                             <option value="add sort">add sort</option>
-                    </select>
-                </form>
-
-                <form action=" ">
-                    <select name="filterBy" id="filter">
-                            <option value="none" selected disabled hidden>Filter by</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
                     </select>
                 </form>
             </div>
@@ -242,15 +225,6 @@
                     </select>
                 </form>
 
-                <form action=" ">
-                    <select name="filterBy" id="filter">
-                            <option value="none" selected disabled hidden>Filter by</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                    </select>
-                </form>
             </div>
         </div>
 
@@ -287,15 +261,6 @@
                     </select>
                 </form>
 
-                <form action=" ">
-                    <select name="filterBy" id="filter">
-                            <option value="none" selected disabled hidden>Filter by</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                    </select>
-                </form>
             </div>
         </div>
 
@@ -318,7 +283,7 @@
         <br>
 
         <!--Alumni display-->
-        <div class="container">
+        <!-- <div class="container">
             <h2>Alumni</h2>
             
             <div class="dropDowns">
@@ -332,15 +297,6 @@
                     </select>
                 </form>
 
-                <form action=" ">
-                    <select name="filterBy" id="filter">
-                            <option value="none" selected disabled hidden>Filter by</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                            <option value="add filter">add filter</option>
-                    </select>
-                </form>
             </div>
         </div>
     
@@ -356,8 +312,43 @@
                 include 'alumni.php';
             ?>
             </table>
-        </div>
+        </div> -->
         <br>
 
     </body>
 </html>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("filterAYSem");
+    const acadYearDropdown = document.getElementById("AY");
+    const semesterDropdown = document.getElementById("semester");
+
+    const getStoredValue = (key, dropdown) => {
+        const storedValue = localStorage.getItem(key);
+        return storedValue && [...dropdown.options].some(opt => opt.value === storedValue) ? storedValue : null;
+    };
+
+    const handleSelectionChange = (dropdown, storageKey) => {
+        localStorage.setItem(storageKey, dropdown.value);
+        debounceSubmit();
+    };
+
+    const debounce = (func, delay) => {
+        let timeout;
+        return () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(func, delay);
+        };
+    };
+
+    const debounceSubmit = debounce(() => form.submit(), 300);
+
+    acadYearDropdown.value = getStoredValue("selectedAcadYear", acadYearDropdown) || acadYearDropdown.value;
+    semesterDropdown.value = getStoredValue("selectedSemester", semesterDropdown) || semesterDropdown.value;
+
+    acadYearDropdown.addEventListener("change", () => handleSelectionChange(acadYearDropdown, "selectedAcadYear"));
+    semesterDropdown.addEventListener("change", () => handleSelectionChange(semesterDropdown, "selectedSemester"));
+});
+
+</script>

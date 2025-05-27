@@ -1,29 +1,36 @@
 <?php
-include 'DBConnector.php';
+include_once 'DBConnector.php';
 
-$sql = "SELECT m.studentID,
+$sql = sprintf(
+    "SELECT m.studentID,
         m.firstName,
         m.lastName,
         m.middleName,
-        m.status,
+        a.status,
         m.upMail,
-        m.contactNo,
-        m.presentAddress,
+        a.contactNo,
+        a.presentAddress,
         m.homeAddress,
         m.signature,
         m.idPicture,
-        m.form5,
+        a.form5,
         r.role,
         COUNT(p.paymentID) AS totalPayments,
         SUM(CASE WHEN p.isPaid = 1 THEN 1 ELSE 0 END) AS paidPayments
-        FROM member m
-        LEFT JOIN pays p ON m.studentID = p.studentID
-        LEFT JOIN assigned a ON m.studentID = a.studentID
-        LEFT JOIN roles r ON a.roleID = r.roleID
-        WHERE m.yearLevel = 2
-        GROUP BY m.lastname ASC";
-
-$result =$conn->query($sql);
+        FROM assigned a
+        INNER JOIN member m ON a.studentID = m.studentID
+        INNER JOIN roles r ON a.roleID = r.roleID
+        LEFT JOIN pays p ON m.studentID = p.studentID 
+            AND p.acadYear = a.acadYear 
+            AND p.semester = a.semester
+        WHERE a.yearLevel = 2 AND a.acadYear = '%s' AND a.semester = %d
+        GROUP BY m.studentID, m.firstName, m.lastName, m.middleName, 
+                 a.status, m.upMail, a.contactNo, a.presentAddress, 
+                 m.homeAddress, m.signature, m.idPicture, a.form5, r.role
+        ORDER BY m.lastName ASC",
+        mysqli_real_escape_string($conn, $acadYear), $semester);
+ 
+ $result =$conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
     
@@ -39,7 +46,7 @@ if ($result && $result->num_rows > 0) {
             !empty($row['form5'])
         );
 
-        $paymentComplete = ($row['paidPayments'] == 3);
+        $paymentComplete = ($row['totalPayments'] > 0 && $row['paidPayments'] == $row['totalPayments']);
         $fullName = $row["lastName"] . ", " . $row["firstName"] . " " . $row["middleName"];
 
         echo "<tr>".
@@ -57,11 +64,11 @@ if ($result && $result->num_rows > 0) {
 
         echo "<td align='center'>".
                 "<div style='display: flex; gap: 5px;  justify-content: center'>".
-                    "<form action='editStudent.php' method='post'>".
+                    "<form action='editPerson.php' method='post'>".
                         "<input type='text' style='display: none;' name='studentID' value='".$row["studentID"]."'>".
                         "<button type='button' onclick='this.form.submit()'>Edit</button>".
                     "</form>".
-                    "<form action='deleteMember.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
+                    "<form action='deletePerson.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
                         "<input type='text' style='display: none;' name='studentID' value='".$row["studentID"]."'>".
                         "<button type='submit'>Delete</button>".
                     "</form>".
@@ -73,5 +80,5 @@ if ($result && $result->num_rows > 0) {
     echo "0 results";
 }
 
-$conn->close();
+// $conn->close();
 ?>

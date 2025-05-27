@@ -1,10 +1,13 @@
 <?php
 include 'DBConnector.php';
 
-$sql = "SELECT DISTINCT advisor.advisorID, firstName, middleInitial, lastName, advises.type, advises.acadYear, advises.semester
+$sql = sprintf("SELECT DISTINCT advisor.advisorID, firstName, middleInitial, lastName, advises.type, advises.acadYear, advises.semester
         FROM advisor
         JOIN advises ON advisor.advisorID = advises.advisorID
-        GROUP BY advisor.advisorID, advises.type";
+        WHERE advises.acadYear = '%s' AND advises.semester = '%s'
+        GROUP BY advisor.advisorID, advises.type",
+        mysqli_real_escape_string($conn, $acadYear),
+        mysqli_real_escape_string($conn, $semester));;
 
 $result = $conn->query($sql);
 
@@ -21,21 +24,19 @@ if ($result->num_rows > 0) {
 
         echo "<td align='center'>".
                 "<div style='display: flex; gap: 5px;  justify-content: center'>".
-                    "<form action='editAdvisor.php' method='post'>".
+                    "<form action='editPerson.php' method='post'>".
                         "<input type='text' style='display: none;' name='advisorID' value='".$row["advisorID"]."'>".
                         "<button type='button' onclick='this.form.submit()'>Edit</button>".
                     "</form>".
-                    "<form action='deleteAdvisor.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
+                    "<form action='deletePerson.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this person?');\">".
                         "<input type='text' style='display: none;' name='advisorID' value='".$row["advisorID"]."'>".
                         "<button type='submit'>Delete</button>".
                     "</form>".
                 "</td>";
         echo "</tr>";
     }
-}
+} 
 else {
     echo "0 results";
 }
-
-$conn->close();
 ?>
