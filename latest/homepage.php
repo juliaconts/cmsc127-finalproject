@@ -129,7 +129,7 @@ if (empty($semester)){
                     <th>Role</th>
                     <th>Status</th>
                     <th>SOA Reqs</th>
-                    <th>Missing Reqs</th>
+                    <th></th>
                     <th></th>
                 </tr>
             <?php
