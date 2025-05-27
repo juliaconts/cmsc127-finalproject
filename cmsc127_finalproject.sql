@@ -121,7 +121,7 @@ CREATE TABLE `assigned` (
   `studentID` int(11) NOT NULL,
   `status` varchar(30) DEFAULT NULL,
   `yearLevel` int(2) DEFAULT NULL,
-  `contactNo` int(11) DEFAULT NULL,
+  `contactNo` varchar(11) DEFAULT NULL,
   `presentAddress` varchar(100) DEFAULT NULL,
   `form5` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -257,23 +257,23 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`roleID`, `role`, `description`) VALUES
-(1, 'Member', 'Is a person who has been officially enrolled in at least 3.0 units worth of Computer Science (CMSC) or equivalent courses. They shall have the rights to participate in all events held by the UPV Komsai.Org.'),
-(2, 'President', 'Shall lead the organization, have the power to make high-level decisions and execute all policies of the organization, and act as the official representative of the UPV Komsai.Org.'),
-(3, 'Vice President for Internal Affairs', 'Shall assist the President in their administrative functions, and shall focus on overseeing the internal happenings within UPV Komsai.Org. They shall automatically become the head of the Website Committee.'),
-(4, 'Vice President for External Affairs', 'Shall assist the President in their administrative functions, and shall focus on overseeing the external activities within UPV. They shall automatically become the head of the Public Relations Committee.'),
-(5, 'Secretary', 'Shall keep full record of the minutes of the meetings, handle the paperwork of the organization, and record and take charge of all documentations. They shall automatically become the head of the Documentation Committee.'),
-(6, 'Treasurer', 'Shall receive, record and keep the financial assets of the organization and shall collect all financial dues from members. They shall automatically become the head of the Finance Committee.'),
-(7, 'Auditor', 'Shall audit all finances and assets of the organization. They shall automatically be part of the Finance Committee.'),
-(8, 'Business Manager', 'Shall take charge in all fundraising activities of the organization and be responsible for all marketing plans of the organization. They shall automatically become head of the Logistics Committee.'),
-(9, 'PIO', 'Shall make press releases concerning the organization as directed by the\r\nPresident and/or the Executive Council. They shall automatically be part of the Website and Publications Committee'),
-(10, 'Batch Representative', 'Shall act as the representative of his/her batch regarding their concerns in the organization. They shall be part of one or multiple committees under the organization.'),
-(11, 'Documentation Committee Member', 'Shall oversee the documentation of all official organizational events through photographs and video recordings, ensuring the preservation of high-quality visual records for archival and promotional use.'),
-(12, 'Finance Committee Member', 'Shall receive, record, and keep the financial records of the organization and shall collect all financial dues from the members.'),
-(13, 'Logistics Committee Member', 'Shall oversee the planning and coordination of all organizational events and activities and collaborate with other committees to ensure smooth logistical operations for events and projects.'),
-(14, 'Publications Committee Member', 'Divided into three main sections: Creatives, Editors, and Social Media Managers. They shall help the PIOs with the creation of publication materials, editing, and handling the social media accounts of the organization.'),
-(15, 'Website Committee Member', 'Shall develop and maintain a strategic plan for the website that aligns with the organization’s mission and goals.'),
-(16, 'Public Relations Committee Member', 'Shall seek partnerships and collaborations with external organizations, sponsors, and other institutions.'),
-(17, 'Education and Research Committee Member', 'Shall be in charge of the overall educational development of the members of the organization and the formulation of the campaigns that the organization will soldier throughout the year.');
+(1, 'President', 'Shall lead the organization, have the power to make high-level decisions and execute all policies of the organization, and act as the official representative of the UPV Komsai.Org.'),
+(2, 'Vice President for Internal Affairs', 'Shall assist the President in their administrative functions, and shall focus on overseeing the internal happenings within UPV Komsai.Org. They shall automatically become the head of the Website Committee.'),
+(3, 'Vice President for External Affairs', 'Shall assist the President in their administrative functions, and shall focus on overseeing the external activities within UPV. They shall automatically become the head of the Public Relations Committee.'),
+(4, 'Secretary', 'Shall keep full record of the minutes of the meetings, handle the paperwork of the organization, and record and take charge of all documentations. They shall automatically become the head of the Documentation Committee.'),
+(5, 'Treasurer', 'Shall receive, record and keep the financial assets of the organization and shall collect all financial dues from members. They shall automatically become the head of the Finance Committee.'),
+(6, 'Auditor', 'Shall audit all finances and assets of the organization. They shall automatically be part of the Finance Committee.'),
+(7, 'Business Manager', 'Shall take charge in all fundraising activities of the organization and be responsible for all marketing plans of the organization. They shall automatically become head of the Logistics Committee.'),
+(8, 'PIO', 'Shall make press releases concerning the organization as directed by the\r\nPresident and/or the Executive Council. They shall automatically be part of the Website and Publications Committee'),
+(9, 'Batch Representative', 'Shall act as the representative of his/her batch regarding their concerns in the organization. They shall be part of one or multiple committees under the organization.'),
+(10, 'Documentation Committee Member', 'Shall oversee the documentation of all official organizational events through photographs and video recordings, ensuring the preservation of high-quality visual records for archival and promotional use.'),
+(11, 'Finance Committee Member', 'Shall receive, record, and keep the financial records of the organization and shall collect all financial dues from the members.'),
+(12, 'Logistics Committee Member', 'Shall oversee the planning and coordination of all organizational events and activities and collaborate with other committees to ensure smooth logistical operations for events and projects.'),
+(13, 'Publications Committee Member', 'Divided into three main sections: Creatives, Editors, and Social Media Managers. They shall help the PIOs with the creation of publication materials, editing, and handling the social media accounts of the organization.'),
+(14, 'Website Committee Member', 'Shall develop and maintain a strategic plan for the website that aligns with the organization’s mission and goals.'),
+(15, 'Public Relations Committee Member', 'Shall seek partnerships and collaborations with external organizations, sponsors, and other institutions.'),
+(16, 'Education and Research Committee Member', 'Shall be in charge of the overall educational development of the members of the organization and the formulation of the campaigns that the organization will soldier throughout the year.'),
+(17, 'Member', 'Is a person who has been officially enrolled in at least 3.0 units worth of Computer Science (CMSC) or equivalent courses. They shall have the rights to participate in all events held by the UPV Komsai.Org.');
 
 -- --------------------------------------------------------
 

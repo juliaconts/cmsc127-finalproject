@@ -167,9 +167,8 @@ body {
     position: sticky;
     top: 0;
     background-color: #4794FF;
-    border: 4px solid #001E47;
+    border: 8px solid #001E47;
     border-top-width: 15px;
-    border-bottom-width: 8px;
     z-index: 10;
     box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); 
     color: #001E47;
