@@ -1,3 +1,4 @@
+<?php include 'DBConnector.php'; ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -67,11 +68,13 @@
         }
     </style>
     <script>
+        //displaying the almnui ID field based on which button they click
         function toggleAlumniIDField() {
             const memberType = document.querySelector('input[name="memberType"]:checked').value;
             const alumniIDField = document.getElementById('alumniIDGroup');
             alumniIDField.style.display = memberType === 'Alumni' ? 'block' : 'none';
         }
+        //for validating inputs
         function validateForm() {
             const studentID = document.querySelector('input[name="studentID"]').value.trim();
             if (studentID === "" || studentID.length !== 9) {
@@ -173,12 +176,6 @@
         <label for="birthday">Birthday:</label>
         <input type="date" name="birthday" required><br>
 
-        <label for="signature">Signature (URL):</label>
-        <input type="text" name="signature"><br>
-
-        <label for="idPicture">ID Picture (URL):</label>
-        <input type="text" name="idPicture"><br>
-
         <!-- Assigned Table Fields -->
         <label for="status">Status:</label>
         <select class="expand" name="status">
@@ -193,23 +190,12 @@
         <label for="roleID">Role:</label>
         <select name="roleID" id="roleID" class="expand" required>
             <option value="">-- Select Role --</option>
-            <option value="1">Member</option>
-            <option value="2">President</option>
-            <option value="3">Vice President for Internal Affairs</option>
-            <option value="4">Vice President for External Affairs</option>
-            <option value="5">Secretary</option>
-            <option value="6">Treasurer</option>
-            <option value="7">Auditor</option>
-            <option value="8">Business Manager</option>
-            <option value="9">PIO</option>
-            <option value="10">Batch Representative</option>
-            <option value="11">Documentation Committee Member</option>
-            <option value="12">Finance Committee Member</option>
-            <option value="13">Logistics Committee Member</option>
-            <option value="14">Publications Committee Member</option>
-            <option value="15">Website Committee Member</option>
-            <option value="16">Public Relations Committee Member</option>
-            <option value="17">Education and Research Committee Member</option>
+            <?php
+            $roles = $conn->query("SELECT roleID, role FROM roles ORDER BY roleID ASC");
+            while ($role = $roles->fetch_assoc()) {
+                echo "<option value='" . htmlspecialchars($role['roleID']) . "'>" . htmlspecialchars($role['role']) . "</option>";
+            }
+            ?>
         </select><br>
 
         <label for="yearLevel">Year Level:</label>
@@ -221,8 +207,31 @@
         <label for="presentAddress">Present Address:</label>
         <input type="text" class="expand" name="presentAddress"><br>
 
+        <label for="signature">Signature (URL):</label>
+        <input type="text" name="signature"><br>
+
+        <label for="idPicture">ID Picture (URL):</label>
+        <input type="text" name="idPicture"><br>
+
         <label for="form5">Form 5 (URL):</label>
         <input type="text" name="form5"><br>
+
+        <label for="acadYear">Academic Year:</label>
+        <select name="acadYear" required>
+            <?php
+            $res = $conn->query("SELECT DISTINCT acadYear FROM academicyear ORDER BY acadYear DESC");
+            while ($row = $res->fetch_assoc()) {
+                echo "<option value='" . htmlspecialchars($row['acadYear']) . "'>" . htmlspecialchars($row['acadYear']) . "</option>";
+            }
+            ?>
+        </select><br>
+
+        <label for="semester">Semester:</label>
+        <select name="semester" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select><br>
+
 
         <button type="submit">Add Member</button>
     </form>

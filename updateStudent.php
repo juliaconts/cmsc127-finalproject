@@ -17,10 +17,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $birthday = $conn->real_escape_string($_POST['birthday']);
     $signature = $conn->real_escape_string($_POST['signature']);
     $idPicture = $conn->real_escape_string($_POST['idPicture']);
-    $form5 = $conn->real_escape_string($_POST['form5']);
-    $role = $conn->real_escape_string($_POST['role']); 
 
-    // update the member table (only columns that exist in member)
+    $form5 = $conn->real_escape_string($_POST['form5']);
+    $roleID = $conn->real_escape_string($_POST['roleID']);
+    $acadYear = $conn->real_escape_string($_POST['acadYear']);
+    $semester = $conn->real_escape_string($_POST['semester']);
+
+    $orig_acadYear = $conn->real_escape_string($_POST['orig_acadYear']);
+    $orig_semester = $conn->real_escape_string($_POST['orig_semester']);
+    $orig_roleID = $conn->real_escape_string($_POST['orig_roleID']);
+
+    // Update member table (as before)
     $sql = "UPDATE member SET
             firstName = '$firstName',
             middleName = '$middleName',
@@ -35,49 +42,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             WHERE studentID = '$studentID'";
 
     if ($conn->query($sql) === TRUE) {
-        // update the assigned table and get the latest acadYear and semester for this student
-        $acadQuery = "SELECT acadYear, semester FROM assigned WHERE studentID = '$studentID' ORDER BY acadYear DESC, semester DESC LIMIT 1";
-        $acadResult = $conn->query($acadQuery);
-        if ($acadRow = $acadResult->fetch_assoc()) {
-            $acadYear = $acadRow['acadYear'];
-            $semester = $acadRow['semester'];
-        } else {
-            // fallback to latest acadYear/semester in academicyear
-            $acadYearResult = $conn->query("SELECT acadYear, semester FROM academicyear ORDER BY acadYear DESC, semester DESC LIMIT 1");
-            $acadYearRow = $acadYearResult->fetch_assoc();
-            $acadYear = $acadYearRow['acadYear'];
-            $semester = $acadYearRow['semester'];
-        }
+        // Check if assigned record exists with the original keys
+        $checkSql = "SELECT COUNT(*) FROM assigned WHERE studentID = '$studentID' AND acadYear = '$orig_acadYear' AND semester = '$orig_semester' AND roleID = '$orig_roleID'";
+        $checkResult = $conn->query($checkSql);
+        $count = $checkResult->fetch_row()[0];
 
-        //get the roleID 
-        $getRoleIdSql = "SELECT roleID FROM roles WHERE role = '$role'";
-        $roleIdResult = $conn->query($getRoleIdSql);
-
-        if ($roleIdResult && $roleIdResult->num_rows > 0) {
-            $roleIdRow = $roleIdResult->fetch_assoc();
-            $roleId = $roleIdRow['roleID'];
-
-            // check if an assigned record exists for this student/acadYear/semester
-            $checkSql = "SELECT COUNT(*) FROM assigned WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester'";
-            $checkResult = $conn->query($checkSql);
-            $count = $checkResult->fetch_row()[0];
-
-            if ($count > 0) {
-                // update existing assigned record
-                $updateAssignedSql = "UPDATE assigned SET 
-                        roleID = '$roleId',
-                        status = " . ($status !== "" ? "'$status'" : "NULL") . ",
-                        yearLevel = " . ($yearLevel !== "" ? "'$yearLevel'" : "NULL") . ",
-                        contactNo = " . ($contactNo !== "" ? "'$contactNo'" : "NULL") . ",
-                        presentAddress = " . ($presentAddress !== "" ? "'$presentAddress'" : "NULL") . ",
-                        form5 = " . ($form5 !== "" ? "'$form5'" : "NULL") . "
-                    WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester'";
-                $conn->query($updateAssignedSql);
-            } else {
-                // insert new assigned record
+        if ($count > 0) {
+            // If the keys have changed, delete the old and insert new
+            if ($orig_acadYear != $acadYear || $orig_semester != $semester || $orig_roleID != $roleID) {
+                // Delete old
+                $conn->query("DELETE FROM assigned WHERE studentID = '$studentID' AND acadYear = '$orig_acadYear' AND semester = '$orig_semester' AND roleID = '$orig_roleID'");
+                // Insert new
                 $insertAssignedSql = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress, form5)
                     VALUES (
-                        '$semester', '$acadYear', '$roleId', '$studentID', " .
+                        '$semester', '$acadYear', '$roleID', '$studentID', " .
                         ($yearLevel !== "" ? "'$yearLevel'" : "NULL") . ", " .
                         ($status !== "" ? "'$status'" : "NULL") . ", " .
                         ($contactNo !== "" ? "'$contactNo'" : "NULL") . ", " .
@@ -85,10 +63,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         ($form5 !== "" ? "'$form5'" : "NULL") .
                     ")";
                 $conn->query($insertAssignedSql);
+            } else {
+                // update existing assigned record
+                $updateAssignedSql = "UPDATE assigned SET 
+                        status = " . ($status !== "" ? "'$status'" : "NULL") . ",
+                        yearLevel = " . ($yearLevel !== "" ? "'$yearLevel'" : "NULL") . ",
+                        contactNo = " . ($contactNo !== "" ? "'$contactNo'" : "NULL") . ",
+                        presentAddress = " . ($presentAddress !== "" ? "'$presentAddress'" : "NULL") . ",
+                        form5 = " . ($form5 !== "" ? "'$form5'" : "NULL") . "
+                    WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester' AND roleID = '$roleID'";
+                $conn->query($updateAssignedSql);
             }
+        } else {
+            // insert new assigned record
+            $insertAssignedSql = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress, form5)
+                VALUES (
+                    '$semester', '$acadYear', '$roleID', '$studentID', " .
+                    ($yearLevel !== "" ? "'$yearLevel'" : "NULL") . ", " .
+                    ($status !== "" ? "'$status'" : "NULL") . ", " .
+                    ($contactNo !== "" ? "'$contactNo'" : "NULL") . ", " .
+                    ($presentAddress !== "" ? "'$presentAddress'" : "NULL") . ", " .
+                    ($form5 !== "" ? "'$form5'" : "NULL") .
+                ")";
+            $conn->query($insertAssignedSql);
         }
 
-        header("Location: homepage.php");
+        // Update or insert into form5 table (canonical source for Form 5)
+        $form5Check = $conn->query("SELECT COUNT(*) FROM form5 WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester'");
+        $form5Count = $form5Check->fetch_row()[0];
+        if ($form5Count > 0) {
+            $conn->query("UPDATE form5 SET form5 = " . ($form5 !== "" ? "'$form5'" : "NULL") . " WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester'");
+        } else {
+            $conn->query("INSERT INTO form5 (acadYear, semester, studentID, form5) VALUES ('$acadYear', '$semester', '$studentID', " . ($form5 !== "" ? "'$form5'" : "NULL") . ")");
+        }
+
+        header("Location: homepage.php?acadYear=" . urlencode($acadYear) . "&semester=" . urlencode($semester));
         exit();
     } else {
         echo "Error updating member record: " . $conn->error;

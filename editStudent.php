@@ -1,18 +1,22 @@
 <?php
 include 'DBConnector.php';
+
+$acadYear = $_POST['acadYear'] ?? $_GET['acadYear'] ?? '';
+$semester = $_POST['semester'] ?? $_GET['semester'] ?? '';
+$roleID = $_POST['roleID'] ?? $_GET['roleID'] ?? '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $studentID = $_POST['studentID'];
 
     $sql = "SELECT m.studentID, m.firstName, m.middleName, m.lastName, 
-                   a.status, m.upMail, a.yearLevel, m.university, m.degreeProgram, 
-                   a.contactNo, a.presentAddress, m.homeAddress, m.birthday, 
-                   m.signature, m.idPicture, a.form5, r.role AS role
-            FROM member m
-            LEFT JOIN student s ON m.studentID = s.studentID
-            LEFT JOIN assigned a ON m.studentID = a.studentID
-            LEFT JOIN roles r ON a.roleID = r.roleID
-            WHERE m.studentID = '$studentID'
-            LIMIT 1";
+            a.status, m.upMail, a.yearLevel, m.university, m.degreeProgram, 
+            a.contactNo, a.presentAddress, m.homeAddress, m.birthday, 
+            m.signature, m.idPicture, a.form5, a.roleID, a.acadYear, a.semester
+        FROM member m
+        LEFT JOIN assigned a ON m.studentID = a.studentID
+            AND a.acadYear = '$acadYear' AND a.semester = '$semester' AND a.roleID = '$roleID'
+        WHERE m.studentID = '$studentID'
+        LIMIT 1";
 
     $result = $conn->query($sql);
 
@@ -31,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     background-size: cover;
                     background-color: #000C1E;
                 }
-
                 form {
                     width: 40%;
                     margin-top: 3%;
@@ -44,13 +47,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     border: 10px solid #0049AD;
                     box-shadow: 0 4px 8px rgb(3, 4, 60);
                 }
-
                 label {
                     display: block;
                     margin-top: 10px;
                     color: rgb(2, 16, 36);
                 }
-
                 input[type="text"],
                 input[type="number"],
                 input[type="date"] {
@@ -61,20 +62,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     border-radius: 5px;
                     box-sizing: border-box;
                 }
-
                 select {
                     padding: 10px;
                     border: 1px solid #ccc;
                     border-radius: 5px;
                     font-size: 16px;
                 }
-
                 .expand {
                     width: 100%;
                     box-sizing: border-box;
-
                 }
-
                 button[type="submit"] {
                     background-color: #001E47;
                     color: white;
@@ -85,7 +82,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     cursor: pointer;
                     width: 100%;
                 }
-
                 button[type="submit"]:hover {
                     background-color: #0049AD;
                 }
@@ -95,6 +91,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <form action="updateStudent.php" method="post">
                 <h2>Edit Member</h2>
                 <input type="hidden" name="studentID" value="<?php echo $row['studentID']; ?>">
+                <input type="hidden" name="orig_acadYear" value="<?php echo htmlspecialchars($row['acadYear']); ?>">
+                <input type="hidden" name="orig_semester" value="<?php echo htmlspecialchars($row['semester']); ?>">
+                <input type="hidden" name="orig_roleID" value="<?php echo htmlspecialchars($row['roleID']); ?>">
+    
                 <label for="firstName">First Name:</label>
                 <input type="text" name="firstName" value="<?php echo $row['firstName']; ?>" required><br>
                 <label for="middleName">Middle Name:</label>
@@ -110,18 +110,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <option value="Shiftee" <?php if ($row['status'] == 'Shiftee') echo 'selected'; ?>>Shiftee</option>
                     <option value="Alumni" <?php if ($row['status'] == 'Alumni') echo 'selected'; ?>>Alumni</option>
                 </select><br>
-                <label for="role">Role:</label>
-                <select class="expand" name="role">
-                    <option value="">-- Select Role --</option>
+
+                <label for="roleID">Role:</label>
+                <select class="expand" name="roleID" required>
+                    <option value="" <?php if (empty($row['roleID'])) echo 'selected'; ?>>-- Select Role --</option>
                     <?php
-                    // Dynamically load roles from the database
-                    $rolesResult = $conn->query("SELECT role FROM roles");
+                    $rolesResult = $conn->query("SELECT roleID, role FROM roles");
                     while ($roleRow = $rolesResult->fetch_assoc()) {
-                        $selected = ($row['role'] == $roleRow['role']) ? 'selected' : '';
-                        echo "<option value=\"" . htmlspecialchars($roleRow['role']) . "\" $selected>" . htmlspecialchars($roleRow['role']) . "</option>";
+                        $selected = ($row['roleID'] == $roleRow['roleID']) ? 'selected' : '';
+                        echo "<option value=\"" . htmlspecialchars($roleRow['roleID']) . "\" $selected>" . htmlspecialchars($roleRow['role']) . "</option>";
                     }
                     ?>
                 </select><br>
+                
                 <label for="upMail">UP Mail:</label>
                 <input type="text" name="upMail" value="<?php echo $row['upMail']; ?>"><br>
                 <label for="yearLevel">Year Level:</label>
@@ -144,6 +145,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="text" name="idPicture" value="<?php echo $row['idPicture']; ?>">
                 <label for="form5">Form 5: </label>
                 <input type="text" name="form5" value="<?php echo $row['form5']; ?>">
+
+                
+                <label for="acadYear">Academic Year:</label>
+                <select name="acadYear" required>
+                    <?php
+                    $acadRes = $conn->query("SELECT DISTINCT acadYear FROM academicyear ORDER BY acadYear DESC");
+                    while ($ay = $acadRes->fetch_assoc()) {
+                        $selected = ($row['acadYear'] == $ay['acadYear']) ? 'selected' : '';
+                        echo "<option value='" . htmlspecialchars($ay['acadYear']) . "' $selected>" . htmlspecialchars($ay['acadYear']) . "</option>";
+                    }
+                    ?>
+                </select><br>
+
+                <label for="semester">Semester:</label>
+                <select name="semester" required>
+                    <option value="1" <?php if ($row['semester'] == 1) echo 'selected'; ?>>1</option>
+                    <option value="2" <?php if ($row['semester'] == 2) echo 'selected'; ?>>2</option>
+                </select><br>
+
                 <button type="submit">Update Member</button>
             </form>
         </body>

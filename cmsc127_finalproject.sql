@@ -123,9 +123,10 @@ CREATE TABLE `assigned` (
   `roleID` int(11) NOT NULL,
   `studentID` int(11) NOT NULL,
   `status` varchar(30) DEFAULT NULL,
-  `yearLevel` int(1) DEFAULT NULL,
-  `contactNo` int(11) DEFAULT NULL,
-  `presentAddress` varchar(100) DEFAULT NULL
+  `yearLevel` int(2) DEFAULT NULL,
+  `contactNo` varchar(15) DEFAULT NULL,
+  `presentAddress` varchar(100) DEFAULT NULL,
+  `form5` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

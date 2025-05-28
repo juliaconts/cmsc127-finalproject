@@ -68,30 +68,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $semester = $acadRow['semester'];
 
         // insert into assigned table
-        $sqlAssigned = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress, form5)
+        $sqlAssigned = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress)
                         VALUES (
                             '$semester', '$acadYear', '$roleID', '$studentID', " .
                             ($yearLevel !== null && $yearLevel !== "" ? "'$yearLevel'" : "NULL") . ", " .
                             ($status !== null && $status !== "" ? "'$status'" : "NULL") . ", " .
                             ($contactNo !== null && $contactNo !== "" ? "'$contactNo'" : "NULL") . ", " .
-                            ($presentAddress !== null && $presentAddress !== "" ? "'$presentAddress'" : "NULL") . ", " .
-                            ($form5 !== null && $form5 !== "" ? "'$form5'" : "NULL") .
+                            ($presentAddress !== null && $presentAddress !== "" ? "'$presentAddress'" : "NULL") .
                         ")";
         if (!mysqli_query($conn, $sqlAssigned)) {
             $conn->rollback();
             echo "<script>alert('Error assigning role: " . addslashes(mysqli_error($conn)) . "'); window.history.back();</script>";
             exit();
         }
+
     } else {
         $conn->rollback();
         echo "<script>alert('No academic year found.'); window.history.back();</script>";
         exit();
     }
 
+        if ($form5 !== null && $form5 !== "") {
+        $sqlForm5 = "INSERT INTO form5 (acadYear, semester, studentID, form5)
+                    VALUES ('$acadYear', '$semester', '$studentID', '$form5')";
+        if (!mysqli_query($conn, $sqlForm5)) {
+            $conn->rollback();
+            echo "<script>alert('Error adding Form 5: " . addslashes(mysqli_error($conn)) . "'); window.history.back();</script>";
+            exit();
+        }
+    }
+
     $conn->commit();
     echo "<script>
             alert('A member has been successfully added.');
-            window.location.href='homepage.php';
+            window.location.href='homepage.php?acadYear=$acadYear&semester=$semester';
           </script>";
 }
 
