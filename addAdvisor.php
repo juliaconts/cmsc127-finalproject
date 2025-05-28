@@ -60,6 +60,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $conn->query("INSERT INTO academicyear (acadYear, semester) VALUES ('$acadYear', 2)");
         }
 
+        
+        $typeString = ($type == 1) ? 'Advisor' : 'Co-Advisor';
+
+        // Check for duplicate assignment for both semesters
+        $dupCheck1 = $conn->query("SELECT * FROM advises WHERE acadYear = '$acadYear' AND semester = 1 AND type = '$typeString'");
+        $dupCheck2 = $conn->query("SELECT * FROM advises WHERE acadYear = '$acadYear' AND semester = 2 AND type = '$typeString'");
+        if (($dupCheck1 && $dupCheck1->num_rows > 0) || ($dupCheck2 && $dupCheck2->num_rows > 0)) {
+            echo "<script>alert('An advisor with the same academic year, semester, and type already exists.'); window.history.back();</script>";
+            $conn->close();
+            exit();
+        }
+
         // insert for both semesters (1 and 2) for the selected academic year
         $insertAdvisesSql1 = "INSERT INTO advises (advisorID, type, acadYear, semester) VALUES ('$advisorID', '$typeString', '$acadYear', 1)";
         $insertAdvisesSql2 = "INSERT INTO advises (advisorID, type, acadYear, semester) VALUES ('$advisorID', '$typeString', '$acadYear', 2)";
@@ -70,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $conn->commit();
             echo "<script>
                     alert('Advisor has been successfully added for both semesters.');
-                    window.location.href='homepage.php';
+                    window.location.href='homepage.php?acadYear=$acadYear&semester=$semester';
                   </script>";
             exit();
         } else {

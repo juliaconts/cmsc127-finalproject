@@ -1,65 +1,64 @@
 <?php
-<?php
 include 'DBConnector.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["studentID"])) {
-    $studentID = urlencode($_POST["studentID"]);
-    $acadYear = isset($_POST['acadYear']) ? urlencode($_POST['acadYear']) : '';
-    $semester = isset($_POST['semester']) ? urlencode($_POST['semester']) : '';
-    $yearLevel = isset($_POST['yearLevel']) ? urlencode($_POST['yearLevel']) : '';
+// Handle POST: Show JS confirm and redirect to GET
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["advisorID"])) {
+    $advisorID = $_POST["advisorID"];
+    $acadYear = isset($_POST['acadYear']) ? $_POST['acadYear'] : '';
+    $semester = isset($_POST['semester']) ? $_POST['semester'] : '';
+    $type = isset($_POST['type']) ? $_POST['type'] : '';
 
-    // Ask user what to delete (JS prompt)
     echo "<script>
-        var choice = confirm('Click OK to delete this student from the entire database.\\nClick Cancel to delete only this instance (for the selected semester, academic year, and year level).');
+        var advisorID = encodeURIComponent(" . json_encode($advisorID) . ");
+        var acadYear = encodeURIComponent(" . json_encode($acadYear) . ");
+        var semester = encodeURIComponent(" . json_encode($semester) . ");
+        var typeVal = encodeURIComponent(" . json_encode($type) . ");
+        var choice = confirm('Click OK to delete this advisor from the entire database.\\nClick Cancel to delete only this assignment (for the selected semester, academic year, and type).');
         if (choice) {
-            window.location.href = 'deleteMember.php?studentID=$studentID&type=full&acadYear=$acadYear&semester=$semester&yearLevel=$yearLevel';
+            window.location.href = 'deleteAdvisor.php?advisorID=' + advisorID + '&type=full&acadYear=' + acadYear + '&semester=' + semester + '&advType=' + typeVal;
         } else {
-            window.location.href = 'deleteMember.php?studentID=$studentID&type=instance&acadYear=$acadYear&semester=$semester&yearLevel=$yearLevel';
+            window.location.href = 'deleteAdvisor.php?advisorID=' + advisorID + '&type=instance&acadYear=' + acadYear + '&semester=' + semester + '&advType=' + typeVal;
         }
     </script>";
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["type"]) && isset($_GET["studentID"])) {
+// Handle GET: Actually perform the deletion
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["type"]) && isset($_GET["advisorID"])) {
     $type = $_GET["type"];
-    $studentID = mysqli_real_escape_string($conn, $_GET["studentID"]);
-    $acadYear = isset($_GET['acadYear']) ? $_GET['acadYear'] : '';
-    $semester = isset($_GET['semester']) ? $_GET['semester'] : '';
-    $yearLevel = isset($_GET['yearLevel']) ? intval($_GET['yearLevel']) : '';
+    $advisorID = mysqli_real_escape_string($conn, $_GET["advisorID"]);
+    $acadYear = isset($_GET['acadYear']) ? mysqli_real_escape_string($conn, $_GET['acadYear']) : '';
+    $semester = isset($_GET['semester']) ? mysqli_real_escape_string($conn, $_GET['semester']) : '';
+    $advType = isset($_GET['advType']) ? mysqli_real_escape_string($conn, $_GET['advType']) : '';
 
     $conn->begin_transaction();
 
     if ($type === "full") {
-        // Delete all related records for this student
-        $conn->query("DELETE FROM pays WHERE studentID = '$studentID'");
-        $conn->query("DELETE FROM assigned WHERE studentID = '$studentID'");
-        $conn->query("DELETE FROM form5 WHERE studentID = '$studentID'");
-        $conn->query("DELETE FROM student WHERE studentID = '$studentID'");
-        $conn->query("DELETE FROM alumni WHERE studentID = '$studentID'");
-        if ($conn->query("DELETE FROM member WHERE studentID = '$studentID'") === TRUE) {
+        // Delete all advises for this advisor, then the advisor record itself
+        $conn->query("DELETE FROM advises WHERE advisorID = '$advisorID'");
+        if ($conn->query("DELETE FROM advisor WHERE advisorID = '$advisorID'") === TRUE) {
             $conn->commit();
             echo "<script>
-                    alert('Member with ID $studentID has been fully deleted from the database.');
+                    alert('Advisor with ID $advisorID has been fully deleted from the database.');
                     window.location.href='homepage.php?acadYear=" . urlencode($acadYear) . "&semester=" . urlencode($semester) . "';
                   </script>";
         } else {
             $conn->rollback();
             echo "<script>
-                    alert('Error deleting member: " . addslashes($conn->error) . "');
+                    alert('Error deleting advisor: " . addslashes($conn->error) . "');
                     window.location.href='homepage.php?acadYear=" . urlencode($acadYear) . "&semester=" . urlencode($semester) . "';
                   </script>";
         }
     } elseif ($type === "instance") {
-        // Delete only the assigned/form5/pays for this instance
-        $conn->query("DELETE FROM pays WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester'");
-        $conn->query("DELETE FROM assigned WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester' AND yearLevel = '$yearLevel'");
-        $conn->query("DELETE FROM form5 WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester'");
+        // Delete only the specific assignment
+        $conn->query("DELETE FROM advises WHERE advisorID = '$advisorID' AND acadYear = '$acadYear' AND semester = '$semester' AND type = '$advType'");
         $conn->commit();
         echo "<script>
-                alert('Member instance for $acadYear, Semester $semester, Year Level $yearLevel has been deleted.');
+                alert('Advisor assignment for $acadYear, Semester $semester, $advType has been deleted.');
                 window.location.href='homepage.php?acadYear=" . urlencode($acadYear) . "&semester=" . urlencode($semester) . "';
               </script>";
     }
+    exit();
 }
 
 $conn->close();
