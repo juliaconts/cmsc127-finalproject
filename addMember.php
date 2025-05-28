@@ -15,7 +15,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $birthday = $_POST['birthday'];
     $signature = $_POST['signature'];
     $idPicture = $_POST['idPicture'];
-    $alumniID = $_POST['alumniID'] ?? null; // only set if it exists
 
     $status = $_POST['status'] ?? null;
     $roleID = $_POST['roleID'];
@@ -39,6 +38,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
+    $alumniID = null;
+    if ($memberType == "Alumni") {
+        // Auto-generate alumniID (use studentID or a unique value)
+        $alumniID = $studentID;
+    }
+
     // insert into student or alumni table
     if ($memberType == "Student") {
         $sqlStudent = "INSERT INTO student (studentID) VALUES ('$studentID')";
@@ -47,18 +52,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "<script>alert('Error adding student record: " . addslashes(mysqli_error($conn)) . "'); window.history.back();</script>";
             exit();
         }
-    } elseif ($memberType == "Alumni" && $alumniID != null) {
+    } elseif ($memberType == "Alumni") {
         $sqlAlumni = "INSERT INTO alumni (alumniID, studentID) VALUES ('$alumniID', '$studentID')";
         if (!mysqli_query($conn, $sqlAlumni)) {
             $conn->rollback();
             echo "<script>alert('Error adding alumni record: " . addslashes(mysqli_error($conn)) . "'); window.history.back();</script>";
             exit();
         }
-    } elseif ($memberType == "Alumni" && $alumniID == null) {
-        $conn->rollback();
-        echo "<script>alert('Error: Alumni ID is required.'); window.history.back();</script>";
-        exit();
     }
+
 
     // get latest acadYear and semester 
     $acadQuery = "SELECT acadYear, semester FROM academicyear ORDER BY acadYear DESC, semester DESC LIMIT 1";
@@ -66,6 +68,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($acadRow = mysqli_fetch_assoc($acadResult)) {
         $acadYear = $acadRow['acadYear'];
         $semester = $acadRow['semester'];
+
+        $checkAssigned = "SELECT COUNT(*) FROM assigned WHERE semester='$semester' AND acadYear='$acadYear' AND roleID='$roleID' AND studentID='$studentID'";
+        $assignedResult = mysqli_query($conn, $checkAssigned);
+        $assignedCount = mysqli_fetch_row($assignedResult)[0];
+        if ($assignedCount > 0) {
+            $conn->rollback();
+            echo "<script>alert('This member is already assigned for the selected academic year, semester, and role.'); window.history.back();</script>";
+            exit();
+        }
 
         // insert into assigned table
         $sqlAssigned = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress)

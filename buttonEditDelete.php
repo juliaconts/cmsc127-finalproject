@@ -4,8 +4,8 @@ echo "<td align='center'>".
         "<form action='editStudent.php' method='post'>".
             "<input type='hidden' name='studentID' value='".htmlspecialchars($row["studentID"])."'>".
             "<input type='hidden' name='roleID' value='".htmlspecialchars($row["roleID"])."'>".
-            "<input type='hidden' name='acadYear' value='".htmlspecialchars($acadYear)."'>".
-            "<input type='hidden' name='semester' value='".htmlspecialchars($semester)."'>".
+            "<input type='hidden' name='acadYear' value='".htmlspecialchars($row["acadYear"])."'>".
+            "<input type='hidden' name='semester' value='".htmlspecialchars($row["semester"])."'>".
                 "<button type='button' onclick='this.form.submit()'>Edit</button>".
          "</form>".
         "<form action='deleteMember.php' method='post' onsubmit=\"return confirm('Are you sure you want to delete this member?');\">".

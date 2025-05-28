@@ -22,6 +22,9 @@ $sql = sprintf(
         m.idPicture,
         f.form5,
         r.role,
+        a.roleID,         
+        a.acadYear,       
+        a.semester, 
         COUNT(p.paymentID) AS totalPayments,
         SUM(CASE WHEN p.isPaid = 1 THEN 1 ELSE 0 END) AS paidPayments
         FROM assigned a
@@ -36,7 +39,7 @@ $sql = sprintf(
         WHERE a.yearLevel = 1 AND a.acadYear = '%s' AND a.semester = %d
         GROUP BY m.studentID, m.lastName, m.firstName, m.middleName, 
                  a.status, m.upMail, a.contactNo, a.presentAddress, 
-                 m.homeAddress, m.signature, m.idPicture, f.form5, r.role",
+                 m.homeAddress, m.signature, m.idPicture, f.form5, r.role,  a.roleID, a.acadYear, a.semester",
 mysqli_real_escape_string($conn, $acadYear), $semester);
  
 // for sorting non pay or soa reqs

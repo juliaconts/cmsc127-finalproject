@@ -68,12 +68,6 @@
         }
     </style>
     <script>
-        //displaying the almnui ID field based on which button they click
-        function toggleAlumniIDField() {
-            const memberType = document.querySelector('input[name="memberType"]:checked').value;
-            const alumniIDField = document.getElementById('alumniIDGroup');
-            alumniIDField.style.display = memberType === 'Alumni' ? 'block' : 'none';
-        }
         //for validating inputs
         function validateForm() {
             const studentID = document.querySelector('input[name="studentID"]').value.trim();
@@ -81,13 +75,7 @@
                 alert("Student ID is required and must be exactly 9 digits.");
                 return false;
             }
-            const memberType = document.querySelector('input[name="memberType"]:checked').value;
-            if (memberType === "Alumni") {
-                const alumniID = document.querySelector('input[name="alumniID"]').value.trim();
-                if (alumniID === "") {
-                    alert("Alumni ID is required for Alumni members.");
-                    return false;
-                }
+
             }
             const firstName = document.querySelector('input[name="firstName"]').value;
             if (firstName == "") {
@@ -146,11 +134,6 @@
 
         <label for="studentID">Student ID:</label>
         <input type="text" name="studentID" required maxlength="9"><br>
-
-        <div id="alumniIDGroup" style="display:none;">
-            <label for="alumniID">Alumni ID:</label>
-            <input type="text" name="alumniID" id="alumniID">
-        </div>
 
         <label for="firstName">First Name:</label>
         <input type="text" name="firstName" required><br>

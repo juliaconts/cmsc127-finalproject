@@ -2,6 +2,7 @@
 include 'DBConnector.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get all fields from POST
     $studentID = $conn->real_escape_string($_POST['studentID']);
     $firstName = $conn->real_escape_string($_POST['firstName']);
     $middleName = $conn->real_escape_string($_POST['middleName']);
@@ -17,17 +18,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $birthday = $conn->real_escape_string($_POST['birthday']);
     $signature = $conn->real_escape_string($_POST['signature']);
     $idPicture = $conn->real_escape_string($_POST['idPicture']);
-
     $form5 = $conn->real_escape_string($_POST['form5']);
     $roleID = $conn->real_escape_string($_POST['roleID']);
     $acadYear = $conn->real_escape_string($_POST['acadYear']);
     $semester = $conn->real_escape_string($_POST['semester']);
 
+    // Original keys (in case the user changes them)
     $orig_acadYear = $conn->real_escape_string($_POST['orig_acadYear']);
     $orig_semester = $conn->real_escape_string($_POST['orig_semester']);
     $orig_roleID = $conn->real_escape_string($_POST['orig_roleID']);
 
-    // Update member table (as before)
+    // Update member table
     $sql = "UPDATE member SET
             firstName = '$firstName',
             middleName = '$middleName',
@@ -42,40 +43,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             WHERE studentID = '$studentID'";
 
     if ($conn->query($sql) === TRUE) {
-        // Check if assigned record exists with the original keys
-        $checkSql = "SELECT COUNT(*) FROM assigned WHERE studentID = '$studentID' AND acadYear = '$orig_acadYear' AND semester = '$orig_semester' AND roleID = '$orig_roleID'";
-        $checkResult = $conn->query($checkSql);
-        $count = $checkResult->fetch_row()[0];
+        // Check for duplicate assigned record with new keys
+        $dupCheckSql = "SELECT COUNT(*) FROM assigned WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester' AND roleID = '$roleID'";
+        $dupCheckResult = $conn->query($dupCheckSql);
+        $dupCount = $dupCheckResult->fetch_row()[0];
 
-        if ($count > 0) {
-            // If the keys have changed, delete the old and insert new
-            if ($orig_acadYear != $acadYear || $orig_semester != $semester || $orig_roleID != $roleID) {
-                // Delete old
-                $conn->query("DELETE FROM assigned WHERE studentID = '$studentID' AND acadYear = '$orig_acadYear' AND semester = '$orig_semester' AND roleID = '$orig_roleID'");
-                // Insert new
-                $insertAssignedSql = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress, form5)
-                    VALUES (
-                        '$semester', '$acadYear', '$roleID', '$studentID', " .
-                        ($yearLevel !== "" ? "'$yearLevel'" : "NULL") . ", " .
-                        ($status !== "" ? "'$status'" : "NULL") . ", " .
-                        ($contactNo !== "" ? "'$contactNo'" : "NULL") . ", " .
-                        ($presentAddress !== "" ? "'$presentAddress'" : "NULL") . ", " .
-                        ($form5 !== "" ? "'$form5'" : "NULL") .
-                    ")";
-                $conn->query($insertAssignedSql);
-            } else {
-                // update existing assigned record
-                $updateAssignedSql = "UPDATE assigned SET 
-                        status = " . ($status !== "" ? "'$status'" : "NULL") . ",
-                        yearLevel = " . ($yearLevel !== "" ? "'$yearLevel'" : "NULL") . ",
-                        contactNo = " . ($contactNo !== "" ? "'$contactNo'" : "NULL") . ",
-                        presentAddress = " . ($presentAddress !== "" ? "'$presentAddress'" : "NULL") . ",
-                        form5 = " . ($form5 !== "" ? "'$form5'" : "NULL") . "
-                    WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester' AND roleID = '$roleID'";
-                $conn->query($updateAssignedSql);
-            }
-        } else {
-            // insert new assigned record
+        // If the key changed and the new key already exists, show error
+        if ($dupCount > 0 && ($orig_acadYear != $acadYear || $orig_semester != $semester || $orig_roleID != $roleID)) {
+            echo "<script>alert('An assigned record with the selected Academic Year, Semester, Role, and Student already exists.'); window.history.back();</script>";
+            $conn->close();
+            exit();
+        }
+
+        // If the key changed, delete the old and insert new
+        if ($orig_acadYear != $acadYear || $orig_semester != $semester || $orig_roleID != $roleID) {
+            $conn->query("DELETE FROM assigned WHERE studentID = '$studentID' AND acadYear = '$orig_acadYear' AND semester = '$orig_semester' AND roleID = '$orig_roleID'");
             $insertAssignedSql = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress, form5)
                 VALUES (
                     '$semester', '$acadYear', '$roleID', '$studentID', " .
@@ -86,6 +68,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ($form5 !== "" ? "'$form5'" : "NULL") .
                 ")";
             $conn->query($insertAssignedSql);
+        } else {
+            // update existing assigned record
+            $updateAssignedSql = "UPDATE assigned SET 
+                    roleID = '$roleID',
+                    status = " . ($status !== "" ? "'$status'" : "NULL") . ",
+                    yearLevel = " . ($yearLevel !== "" ? "'$yearLevel'" : "NULL") . ",
+                    contactNo = " . ($contactNo !== "" ? "'$contactNo'" : "NULL") . ",
+                    presentAddress = " . ($presentAddress !== "" ? "'$presentAddress'" : "NULL") . ",
+                    form5 = " . ($form5 !== "" ? "'$form5'" : "NULL") . "
+                WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester' AND roleID = '$roleID'";
+            $conn->query($updateAssignedSql);
         }
 
         // Update or insert into form5 table (canonical source for Form 5)
