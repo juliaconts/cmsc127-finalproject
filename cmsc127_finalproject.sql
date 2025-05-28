@@ -120,9 +120,9 @@ INSERT INTO `alumni` (`alumniID`, `studentID`, `yearGraduated`) VALUES
 CREATE TABLE `assigned` (
   `semester` int(11) NOT NULL,
   `acadYear` varchar(9) NOT NULL,
-  `roleID` int(11) NOT NULL,
+  `roleID` int(11) DEFAULT 17 NOT NULL,
   `studentID` int(11) NOT NULL,
-  `status` varchar(30) DEFAULT NULL,
+  `status` varchar(30) DEFAULT 'Regular' NOT NULL,
   `yearLevel` int(2) DEFAULT NULL,
   `contactNo` varchar(15) DEFAULT NULL,
   `presentAddress` varchar(100) DEFAULT NULL,
@@ -404,8 +404,7 @@ ALTER TABLE `roles`
 -- Indexes for table `student`
 --
 ALTER TABLE `student`
-  ADD PRIMARY KEY (`studentID`);
-
+  ADD CONSTRAINT `student_ibfk_1` FOREIGN KEY (`studentID`) REFERENCES `member` (`studentID`);
 --
 -- Constraints for dumped tables
 --
