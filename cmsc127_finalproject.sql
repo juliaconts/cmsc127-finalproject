@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 27, 2025 at 11:13 PM
+-- Generation Time: May 29, 2025 at 01:01 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `cmsc127_finalproject`
+-- Database: `trialcmsc127`
 --
 
 -- --------------------------------------------------------
@@ -133,26 +133,26 @@ CREATE TABLE `assigned` (
 -- Dumping data for table `assigned`
 --
 
-INSERT INTO `assigned` (`semester`, `acadYear`, `roleID`, `studentID`, `status`, `yearLevel`, `contactNo`, `presentAddress`) VALUES
-(1, '2023-2024', 17, 201799001, 'Alumni', NULL, 2147483647, 'Yokohama'),
-(1, '2023-2024', 17, 201799018, 'Alumni', NULL, 214748364, 'Iloilo'),
-(1, '2023-2024', 17, 202101829, 'Shiftee', 1, 214748364, 'Iloilo'),
-(1, '2023-2024', 17, 202300102, 'Transferee', 2, 214748364, 'Iloilo'),
-(1, '2023-2024', 17, 202309989, 'Regular', 3, 214748364, NULL),
-(1, '2023-2024', 17, 202350056, 'Irregular', 4, 214748364, NULL),
-(1, '2024-2025', 17, 202101829, 'Shiftee', 5, 214748364, 'Iloilo'),
-(1, '2024-2025', 17, 202300102, 'Transferee', 2, 214748364, 'Iloilo'),
-(1, '2024-2025', 17, 202309989, 'Regular', 2, 214748364, 'Iloilo'),
-(1, '2024-2025', 17, 202350056, 'Irregular', 2, 214748364, 'Iloilo'),
-(1, '2025-2026', 1, 202101829, 'Shiftee', 1, NULL, NULL),
-(2, '2023-2024', 17, 202101829, 'Shiftee', 1, 214748364, 'Iloilo'),
-(2, '2023-2024', 17, 202300102, 'Transferee', 1, 214748364, 'Iloilo'),
-(2, '2023-2024', 17, 202309989, 'Regular', 1, 214748364, ''),
-(2, '2023-2024', 17, 202350056, 'Irregular', 1, 214748364, ''),
-(2, '2024-2025', 17, 202101829, 'Shiftee', 2, 214748364, 'Iloilo'),
-(2, '2024-2025', 17, 202300102, 'Transferee', 2, 214748364, 'Iloilo'),
-(2, '2024-2025', 17, 202309989, 'Regular', 2, 214748364, ''),
-(2, '2024-2025', 17, 202350056, 'Irregular', 2, 214748364, '');
+INSERT INTO `assigned` (`semester`, `acadYear`, `roleID`, `studentID`, `status`, `yearLevel`, `contactNo`, `presentAddress`, `form5`) VALUES
+(1, '2023-2024', 17, 201799001, 'Alumni', NULL, '2147483647', 'Yokohama', NULL),
+(1, '2023-2024', 17, 201799018, 'Alumni', NULL, '214748364', 'Iloilo', NULL),
+(1, '2023-2024', 17, 202101829, 'Shiftee', 1, '214748364', 'Iloilo', NULL),
+(1, '2023-2024', 17, 202300102, 'Transferee', 2, '214748364', 'Iloilo', NULL),
+(1, '2023-2024', 17, 202309989, 'Regular', 3, '214748364', NULL, NULL),
+(1, '2023-2024', 17, 202350056, 'Irregular', 4, '214748364', NULL, NULL),
+(1, '2024-2025', 17, 202101829, 'Shiftee', 5, '214748364', 'Iloilo', NULL),
+(1, '2024-2025', 17, 202300102, 'Transferee', 2, '214748364', 'Iloilo', NULL),
+(1, '2024-2025', 17, 202309989, 'Regular', 2, '214748364', 'Iloilo', NULL),
+(1, '2024-2025', 17, 202350056, 'Irregular', 2, '214748364', 'Iloilo', NULL),
+(1, '2025-2026', 1, 202101829, 'Shiftee', 1, NULL, NULL, NULL),
+(2, '2023-2024', 17, 202101829, 'Shiftee', 1, '214748364', 'Iloilo', NULL),
+(2, '2023-2024', 17, 202300102, 'Transferee', 1, '214748364', 'Iloilo', NULL),
+(2, '2023-2024', 17, 202309989, 'Regular', 1, '214748364', '', NULL),
+(2, '2023-2024', 17, 202350056, 'Irregular', 1, '214748364', '', NULL),
+(2, '2024-2025', 17, 202101829, 'Shiftee', 2, '214748364', 'Iloilo', NULL),
+(2, '2024-2025', 17, 202300102, 'Transferee', 2, '214748364', 'Iloilo', NULL),
+(2, '2024-2025', 17, 202309989, 'Regular', 2, '214748364', '', NULL),
+(2, '2024-2025', 17, 202350056, 'Irregular', 2, '214748364', '', NULL);
 
 -- --------------------------------------------------------
 
@@ -407,6 +407,16 @@ ALTER TABLE `student`
   ADD PRIMARY KEY (`studentID`);
 
 --
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `alumni`
+--
+ALTER TABLE `alumni`
+  MODIFY `alumniID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -437,6 +447,23 @@ ALTER TABLE `assigned`
 ALTER TABLE `form5`
   ADD CONSTRAINT `fk_form5_academicyear` FOREIGN KEY (`acadYear`,`semester`) REFERENCES `academicyear` (`acadYear`, `semester`),
   ADD CONSTRAINT `fk_form5_member` FOREIGN KEY (`studentID`) REFERENCES `member` (`studentID`);
+
+--
+-- Constraints for table `pays`
+--
+ALTER TABLE `pays`
+  ADD CONSTRAINT `fk_pays_academicyear` FOREIGN KEY (`acadYear`,`semester`) REFERENCES `academicyear` (`acadYear`, `semester`),
+  ADD CONSTRAINT `fk_pays_member` FOREIGN KEY (`studentID`) REFERENCES `member` (`studentID`),
+  ADD CONSTRAINT `fk_pays_payment` FOREIGN KEY (`paymentID`) REFERENCES `payment` (`paymentID`),
+  ADD CONSTRAINT `pays_ibfk_1` FOREIGN KEY (`paymentID`) REFERENCES `payment` (`paymentID`),
+  ADD CONSTRAINT `pays_ibfk_2` FOREIGN KEY (`studentID`) REFERENCES `student` (`studentID`),
+  ADD CONSTRAINT `pays_ibfk_3` FOREIGN KEY (`acadYear`) REFERENCES `academicyear` (`acadYear`);
+
+--
+-- Constraints for table `student`
+--
+ALTER TABLE `student`
+  ADD CONSTRAINT `fk_student_member` FOREIGN KEY (`studentID`) REFERENCES `member` (`studentID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

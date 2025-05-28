@@ -53,14 +53,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
     } elseif ($memberType == "Alumni") {
-        $sqlAlumni = "INSERT INTO alumni (alumniID, studentID) VALUES ('$alumniID', '$studentID')";
+        $sqlAlumni = "INSERT INTO alumni (studentID) VALUES ('$studentID')";
         if (!mysqli_query($conn, $sqlAlumni)) {
             $conn->rollback();
             echo "<script>alert('Error adding alumni record: " . addslashes(mysqli_error($conn)) . "'); window.history.back();</script>";
             exit();
         }
     }
-
 
     // get latest acadYear and semester 
     $acadQuery = "SELECT acadYear, semester FROM academicyear ORDER BY acadYear DESC, semester DESC LIMIT 1";
