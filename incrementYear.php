@@ -137,6 +137,13 @@ function processAcademicYear($conn, $studentID, $prevAcadYear, $prevSemester,
         $prevData = $result->fetch_assoc();
     }
 
+    //stop adding data for student if inactive
+    $inactiveStatus = ['Dropped', 'LOA', 'Transferred'];
+
+    if (isset($prevData['status']) && in_array($prevData['status'], $inactiveStatus)) {
+        return;
+    }
+
     $isNewYear = ($newAcadYear > $prevAcadYear);
     if ($isNewYear) {
         if (!empty($prevData['yearLevel'])) {
