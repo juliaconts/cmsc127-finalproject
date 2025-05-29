@@ -77,6 +77,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
 
+        if ($roleID >= 2 && $roleID <= 9) {
+            // Remove any existing assignment for this role in this acadYear/semester
+            $conn->query("DELETE FROM assigned WHERE acadYear='$acadYear' AND semester='$semester' AND roleID='$roleID'");
+        }
+
+        // Batch Representative logic (roleID 9)
+        if ($roleID == 9 && $yearLevel !== null && $yearLevel !== "") {
+            // Count batch reps for this year level
+            $batchRepCount = $conn->query("SELECT COUNT(*) FROM assigned WHERE acadYear='$acadYear' AND semester='$semester' AND roleID=9 AND yearLevel='$yearLevel'");
+            $count = $batchRepCount ? $batchRepCount->fetch_row()[0] : 0;
+            if ($count >= 4) {
+                // Remove the oldest (or any) batch rep for this year level
+                $conn->query("DELETE FROM assigned WHERE acadYear='$acadYear' AND semester='$semester' AND roleID=9 AND yearLevel='$yearLevel' ORDER BY studentID ASC LIMIT 1");
+            }
+        }
+
         // insert into assigned table
         $sqlAssigned = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress)
                         VALUES (
