@@ -30,7 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["type"]) && isset($_GET["
 
     $conn->begin_transaction();
 
+    //if the student is to be completely deleted from the database
     if ($type === "full") {
+        //delete fk constraints first
         $conn->query("DELETE FROM pays WHERE studentID = '$studentID'");
         $conn->query("DELETE FROM assigned WHERE studentID = '$studentID'");
         $conn->query("DELETE FROM form5 WHERE studentID = '$studentID'");
@@ -38,17 +40,26 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["type"]) && isset($_GET["
         $conn->query("DELETE FROM alumni WHERE studentID = '$studentID'");
         if ($conn->query("DELETE FROM member WHERE studentID = '$studentID'") === TRUE) {
             $conn->commit();
+        //check if member is an alumni
+        $isAlumni = false;
+        $alumniCheck = $conn->query("SELECT 1 FROM alumni WHERE studentID = '$studentID' LIMIT 1");
+        if ($alumniCheck && $alumniCheck->num_rows > 0) {
+            $isAlumni = true;
+        }
+        //choose where to redirect (because the alumni page is different)
+        $redirectPage = $isAlumni ? 'alumnipage.php' : 'homepage.php';
             echo "<script>
                     alert('Member with ID $studentID has been fully deleted from the database.');
-                    window.location.href='homepage.php?acadYear=" . urlencode($acadYear) . "&semester=" . urlencode($semester) . "';
-                  </script>";
+                    window.location.href='$redirectPage?acadYear=" . urlencode($acadYear) . "&semester=" . urlencode($semester) . "';
+                    </script>";
         } else {
             $conn->rollback();
             echo "<script>
                     alert('Error deleting member: " . addslashes($conn->error) . "');
-                    window.location.href='homepage.php?acadYear=" . urlencode($acadYear) . "&semester=" . urlencode($semester) . "';
+                    window.location.href='$redirectPage?acadYear=" . urlencode($acadYear) . "&semester=" . urlencode($semester) . "';
                   </script>";
         }
+        //if the member is to be deleted only for a specific instance (semester and academic year)
     } elseif ($type === "instance") {
         $conn->query("DELETE FROM pays WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester'");
         $conn->query("DELETE FROM assigned WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester'");

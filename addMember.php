@@ -22,6 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $contactNo = $_POST['contactNo'] ?? null;
     $presentAddress = $_POST['presentAddress'] ?? null;
     $form5 = $_POST['form5'] ?? null;
+    $yearGraduated = $_POST['yearGraduated'] ?? null;
+
 
     $conn->begin_transaction();
 
@@ -40,7 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $alumniID = null;
     if ($memberType == "Alumni") {
-        // Auto-generate alumniID (use studentID or a unique value)
         $alumniID = $studentID;
     }
 
@@ -53,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
     } elseif ($memberType == "Alumni") {
-        $sqlAlumni = "INSERT INTO alumni (studentID) VALUES ('$studentID')";
+        $sqlAlumni = "INSERT INTO alumni (studentID, yearGraduated) VALUES ('$studentID', '$yearGraduated')";
         if (!mysqli_query($conn, $sqlAlumni)) {
             $conn->rollback();
             echo "<script>alert('Error adding alumni record: " . addslashes(mysqli_error($conn)) . "'); window.history.back();</script>";
@@ -67,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($acadRow = mysqli_fetch_assoc($acadResult)) {
         $acadYear = $acadRow['acadYear'];
         $semester = $acadRow['semester'];
-
+        
         $checkAssigned = "SELECT COUNT(*) FROM assigned WHERE semester='$semester' AND acadYear='$acadYear' AND roleID='$roleID' AND studentID='$studentID'";
         $assignedResult = mysqli_query($conn, $checkAssigned);
         $assignedCount = mysqli_fetch_row($assignedResult)[0];
@@ -77,31 +78,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
 
-        if ($roleID >= 2 && $roleID <= 9) {
-            // Remove any existing assignment for this role in this acadYear/semester
+        //role logic so that the latest person overwrites the previous one
+        if ($roleID >= 1 && $roleID <= 8) {
+            // remove any existing assignment for this role in this acadYear/semester
             $conn->query("DELETE FROM assigned WHERE acadYear='$acadYear' AND semester='$semester' AND roleID='$roleID'");
         }
 
-        // Batch Representative logic (roleID 9)
+        // batchrep logic
         if ($roleID == 9 && $yearLevel !== null && $yearLevel !== "") {
-            // Count batch reps for this year level
+            // count batch reps for this year level
             $batchRepCount = $conn->query("SELECT COUNT(*) FROM assigned WHERE acadYear='$acadYear' AND semester='$semester' AND roleID=9 AND yearLevel='$yearLevel'");
             $count = $batchRepCount ? $batchRepCount->fetch_row()[0] : 0;
             if ($count >= 4) {
-                // Remove the oldest (or any) batch rep for this year level
+                // remove the oldest (or any) batch rep for this year level
                 $conn->query("DELETE FROM assigned WHERE acadYear='$acadYear' AND semester='$semester' AND roleID=9 AND yearLevel='$yearLevel' ORDER BY studentID ASC LIMIT 1");
             }
         }
 
         // insert into assigned table
         $sqlAssigned = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress)
-                        VALUES (
-                            '$semester', '$acadYear', '$roleID', '$studentID', " .
-                            ($yearLevel !== null && $yearLevel !== "" ? "'$yearLevel'" : "NULL") . ", " .
-                            ($status !== null && $status !== "" ? "'$status'" : "NULL") . ", " .
-                            ($contactNo !== null && $contactNo !== "" ? "'$contactNo'" : "NULL") . ", " .
-                            ($presentAddress !== null && $presentAddress !== "" ? "'$presentAddress'" : "NULL") .
-                        ")";
+                VALUES (
+                    '$semester', '$acadYear', '$roleID', '$studentID', " .
+                    ($yearLevel !== null && $yearLevel !== "" ? "'$yearLevel'" : "NULL") . ", " .
+                    ($status !== null && $status !== "" ? "'$status'" : "NULL") . ", " .
+                    ($contactNo !== null && $contactNo !== "" ? "'$contactNo'" : "NULL") . ", " .
+                    ($presentAddress !== null && $presentAddress !== "" ? "'$presentAddress'" : "NULL") .
+                ")";
         if (!mysqli_query($conn, $sqlAssigned)) {
             $conn->rollback();
             echo "<script>alert('Error assigning role: " . addslashes(mysqli_error($conn)) . "'); window.history.back();</script>";
@@ -114,6 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
+        // insert into pays table
         if ($form5 !== null && $form5 !== "") {
         $sqlForm5 = "INSERT INTO form5 (acadYear, semester, studentID, form5)
                     VALUES ('$acadYear', '$semester', '$studentID', '$form5')";

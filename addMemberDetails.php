@@ -118,7 +118,6 @@
                 return false;
             }
             return true;
-        }
     </script>
 </head>
 <body>
@@ -126,14 +125,19 @@
         <h2>Add Member</h2>
         <label>Member Type:</label>
         <div class="radio-group">
-            <input type="radio" id="student" name="memberType" value="Student" checked onclick="toggleAlumniIDField()">
+            <input type="radio" id="student" name="memberType" value="Student" checked>
             <label for="student">Student</label>
-            <input type="radio" id="alumni" name="memberType" value="Alumni" onclick="toggleAlumniIDField()">
+            <input type="radio" id="alumni" name="memberType" value="Alumni">
             <label for="alumni">Alumni</label>
         </div>
 
         <label for="studentID">Student ID:</label>
         <input type="text" name="studentID" required maxlength="9"><br>
+
+        <div id="yearGraduatedGroup" style="display:none;">
+            <label for="yearGraduated">Year Graduated:</label>
+            <input type="text" name="yearGraduated" id="yearGraduated">
+        </div>
 
         <label for="firstName">First Name:</label>
         <input type="text" name="firstName" required><br>
@@ -143,6 +147,38 @@
 
         <label for="lastName">Last Name:</label>
         <input type="text" name="lastName" required><br>
+
+        <div id="yearLevelGroup">
+            <label for="yearLevel">Year Level:</label>
+            <input type="number" name="yearLevel" min="1" max="5"><br>
+        </div>
+
+        <!-- hiding the fields between Alumni and Student -->
+        <script>
+        window.onload = function() {
+            const memberTypeRadios = document.getElementsByName('memberType');
+            const yearGraduatedGroup = document.getElementById('yearGraduatedGroup');
+            const yearLevelGroup = document.getElementById('yearLevelGroup');
+
+            function toggleFields() {
+                let isAlumni = false;
+                for (let i = 0; i < memberTypeRadios.length; i++) {
+                    if (memberTypeRadios[i].checked && memberTypeRadios[i].value === 'Alumni') {
+                        isAlumni = true;
+                        break;
+                    }
+                }
+                yearGraduatedGroup.style.display = isAlumni ? 'block' : 'none';
+                yearLevelGroup.style.display = isAlumni ? 'none' : 'block';
+            }
+
+            for (let i = 0; i < memberTypeRadios.length; i++) {
+                memberTypeRadios[i].addEventListener('change', toggleFields);
+            }
+
+            toggleFields(); // Initial check
+        };
+        </script>
 
         <label for="upMail">UP Mail:</label>
         <input type="text" name="upMail" required><br>
@@ -170,6 +206,7 @@
             <option value="Alumni">Alumni</option>
         </select><br>
 
+        <!-- displaying the roles from the database -->
         <label for="roleID">Role:</label>
         <select name="roleID" id="roleID" class="expand" required>
             <option value="">-- Select Role --</option>
@@ -180,9 +217,6 @@
             }
             ?>
         </select><br>
-
-        <label for="yearLevel">Year Level:</label>
-        <input type="number" name="yearLevel" min="1" max="5"><br>
 
         <label for="contactNo">Contact No:</label>
         <input type="text" name="contactNo"><br>
@@ -199,6 +233,7 @@
         <label for="form5">Form 5 (URL):</label>
         <input type="text" name="form5"><br>
 
+        <!-- displaying the academic year and semester -->
         <label for="acadYear">Academic Year:</label>
         <select name="acadYear" required>
             <?php
@@ -215,11 +250,17 @@
             <option value="2">2</option>
         </select><br>
 
-
         <button type="submit">Add Member</button>
+        <!-- cancel button to go back to the homepage with selected academic year and semester -->
+        <button type="button"
+            onclick="
+                var acadYear = document.querySelector('select[name=acadYear]').value;
+                var semester = document.querySelector('select[name=semester]').value;
+                window.location.href = 'homepage.php?acadYear=' + encodeURIComponent(acadYear) + '&semester=' + encodeURIComponent(semester);
+            "
+            style="background-color:#640214;color:white;margin-top:10px;">
+            Cancel
+        </button>
     </form>
-    <script>
-        toggleAlumniIDField();
-    </script>
 </body>
 </html>
