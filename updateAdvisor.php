@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $new_acadYear = $conn->real_escape_string($_POST['new_acadYear']);
         $new_semester = $conn->real_escape_string($_POST['new_semester']);
         $new_type = $conn->real_escape_string($_POST['new_type']);
-        // Only insert if not already existing
+        // only insert if not already existing
         $check = $conn->query("SELECT * FROM advises WHERE advisorID = '$advisorID' AND acadYear = '$new_acadYear' AND semester = '$new_semester'");
         if ($check->num_rows == 0) {
             $conn->query("INSERT INTO advises (advisorID, type, acadYear, semester) VALUES ('$advisorID', '$new_type', '$new_acadYear', '$new_semester')");
@@ -43,11 +43,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $redir_acadYear = $new_acadYear;
         $redir_semester = $new_semester;
     } elseif (!empty($_POST['adv_acadYear'][0]) && !empty($_POST['adv_semester'][0])) {
-        // Use the first advises entry if available
+        // use the first advises entry if available
         $redir_acadYear = $conn->real_escape_string($_POST['adv_acadYear'][0]);
         $redir_semester = $conn->real_escape_string($_POST['adv_semester'][0]);
     } else {
-        // Fallback: get latest acadYear/semester from DB
         $latest = $conn->query("SELECT acadYear, semester FROM academicyear ORDER BY acadYear DESC, semester DESC LIMIT 1");
         if ($latest && $latest->num_rows > 0) {
             $row = $latest->fetch_assoc();

@@ -23,7 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["advisorID"])) {
     exit();
 }
 
-// Handle GET: Actually perform the deletion
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["type"]) && isset($_GET["advisorID"])) {
     $type = $_GET["type"];
     $advisorID = mysqli_real_escape_string($conn, $_GET["advisorID"]);
@@ -33,8 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["type"]) && isset($_GET["
 
     $conn->begin_transaction();
 
+    //if the advisor is to be completely deleted from the database
     if ($type === "full") {
-        // Delete all advises for this advisor, then the advisor record itself
+        // delete all advises for this advisor, then the advisor record itself
         $conn->query("DELETE FROM advises WHERE advisorID = '$advisorID'");
         if ($conn->query("DELETE FROM advisor WHERE advisorID = '$advisorID'") === TRUE) {
             $conn->commit();
@@ -49,8 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["type"]) && isset($_GET["
                     window.location.href='homepage.php?acadYear=" . urlencode($acadYear) . "&semester=" . urlencode($semester) . "';
                   </script>";
         }
+    //if the advisor is to be deleted only for a specific instance (semester, academic year, and type)
     } elseif ($type === "instance") {
-        // Delete only the specific assignment
         $conn->query("DELETE FROM advises WHERE advisorID = '$advisorID' AND acadYear = '$acadYear' AND semester = '$semester' AND type = '$advType'");
         $conn->commit();
         echo "<script>

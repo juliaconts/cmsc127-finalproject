@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($advisorResult) {
         $typeString = ($type == 1) ? 'Advisor' : 'Co-Advisor';
 
-        // Ensure the academic year exists for both semesters in academicyear table
+        // ensure the academic year exists for both semesters in academicyear table
         $checkAcadYear1 = $conn->query("SELECT * FROM academicyear WHERE acadYear = '$acadYear' AND semester = 1");
         $checkAcadYear2 = $conn->query("SELECT * FROM academicyear WHERE acadYear = '$acadYear' AND semester = 2");
         if ($checkAcadYear1->num_rows == 0) {
@@ -60,10 +60,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $conn->query("INSERT INTO academicyear (acadYear, semester) VALUES ('$acadYear', 2)");
         }
 
-        
         $typeString = ($type == 1) ? 'Advisor' : 'Co-Advisor';
 
-        // Check for duplicate assignment for both semesters
+        // check for duplicates (acad year, semester, type)
         $dupCheck1 = $conn->query("SELECT * FROM advises WHERE acadYear = '$acadYear' AND semester = 1 AND type = '$typeString'");
         $dupCheck2 = $conn->query("SELECT * FROM advises WHERE acadYear = '$acadYear' AND semester = 2 AND type = '$typeString'");
         if (($dupCheck1 && $dupCheck1->num_rows > 0) || ($dupCheck2 && $dupCheck2->num_rows > 0)) {

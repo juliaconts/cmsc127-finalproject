@@ -165,6 +165,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </select><br>
 
                 <button type="submit">Update Member</button>
+                <button type="button"
+                    onclick="
+                        var acadYear = document.querySelector('select[name=acadYear]').value;
+                        var semester = document.querySelector('select[name=semester]').value;
+                        window.location.href = 'homepage.php?acadYear=' + encodeURIComponent(acadYear) + '&semester=' + encodeURIComponent(semester);
+                    "
+                    style="background-color:#640214;color:white;margin-top:10px;">
+                    Cancel
+                </button>
             </form>
         </body>
         </html>

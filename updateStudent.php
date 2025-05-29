@@ -28,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $orig_semester = $conn->real_escape_string($_POST['orig_semester']);
     $orig_roleID = $conn->real_escape_string($_POST['orig_roleID']);
 
-    // Update member table
     $sql = "UPDATE member SET
             firstName = '$firstName',
             middleName = '$middleName',
@@ -42,8 +41,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             idPicture = '$idPicture'
             WHERE studentID = '$studentID'";
 
+    //role logic (overwrite previous role)
+    if ($roleID >= 1 && $roleID <= 8) {
+        // change the role of previous student to member
+        $conn->query("UPDATE assigned SET roleID = 17 WHERE acadYear='$acadYear' AND semester='$semester' AND roleID='$roleID' AND studentID != '$studentID'");
+    }
+
+    if ($roleID == 9 && $yearLevel !== "" && $yearLevel !== null) {
+        // count batch reps for this year level
+        $batchRepCount = $conn->query("SELECT COUNT(*) FROM assigned WHERE acadYear='$acadYear' AND semester='$semester' AND roleID=9 AND yearLevel='$yearLevel' AND studentID != '$studentID'");
+        $count = $batchRepCount ? $batchRepCount->fetch_row()[0] : 0;
+        if ($count >= 4) {
+            // remove the oldest (or any) batch rep for this year level
+            $conn->query("DELETE FROM assigned WHERE acadYear='$acadYear' AND semester='$semester' AND roleID=9 AND yearLevel='$yearLevel' AND studentID != '$studentID' ORDER BY studentID ASC LIMIT 1");
+        }
+    }
+
     if ($conn->query($sql) === TRUE) {
-        // Check for duplicate assigned record with new keys
+        // check for duplicates
         $dupCheckSql = "SELECT COUNT(*) FROM assigned WHERE studentID = '$studentID' AND acadYear = '$acadYear' AND semester = '$semester' AND roleID = '$roleID'";
         $dupCheckResult = $conn->query($dupCheckSql);
         $dupCount = $dupCheckResult->fetch_row()[0];

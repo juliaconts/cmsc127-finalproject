@@ -170,6 +170,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </select>
                 <br>
                 <button type="submit">Update Advisor</button>
+                <!-- cancel button to go back to homepage with current academic year and semester -->
+                <button type="button"
+                    onclick="
+                        var acadYear = document.querySelector('select[name=new_acadYear]') ? document.querySelector('select[name=new_acadYear]').value : '';
+                        var semester = document.querySelector('select[name=new_semester]') ? document.querySelector('select[name=new_semester]').value : '';
+                        if (!acadYear) {
+                            // fallback to first advises entry if exists
+                            var ayInputs = document.getElementsByName('adv_acadYear[]');
+                            if (ayInputs.length > 0) acadYear = ayInputs[0].value;
+                        }
+                        if (!semester) {
+                            var semInputs = document.getElementsByName('adv_semester[]');
+                            if (semInputs.length > 0) semester = semInputs[0].value;
+                        }
+                        window.location.href = 'homepage.php?acadYear=' + encodeURIComponent(acadYear) + '&semester=' + encodeURIComponent(semester);
+                    "
+                    style="background-color:#640214;color:white;margin-top:10px;">
+                    Cancel
+                </button>
             </form>
         </body>
         </html>
