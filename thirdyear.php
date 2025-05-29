@@ -4,8 +4,8 @@ include_once 'DBConnector.php';
 // for sorting
 include 'sort_config.php';
 $sort = $_GET['sort3By'] ?? 'none';
-if ($sort === 'pay-reqs' or $sort ==='soa-reqs')    $sortBy = ''; // no SQL ordering, do PHP sorting only
-else                                                $sortBy = $allowed[$sort];
+if ($sort ==='soa-reqs')    $sortBy = ''; // no SQL ordering, do PHP sorting only
+else                        $sortBy = $allowed[$sort];
 // 
 
 $sql = sprintf(

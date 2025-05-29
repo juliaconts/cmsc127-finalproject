@@ -65,24 +65,22 @@ if (empty($semester)){
         </div>
     </div>
 
-        
-    <!-- Display for search -->
-    <div class="search">
-        <!-- for shen to add whoever comes up in the search -->
-    </div>
-
     <!--First Year display-->
         <div class="container">
             <h2>1st Year</h2>
         
             <div class="dropDowns">
-                <form action="homepage.php" method="GET">
+                <form action="paymentpage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sort1By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>
                             <option value="alphabet-desc">Z-A</option>
-                            <option value="role">Role</option>
                             <option value="status">Status</option>
+                            <option value="memfee">Membership Fee</option>
+                            <option value="akwe-24">AKWE 2024</option>
+                            <option value="akwe-23">AKWE 2023</option>
                     </select>
                 </form>
             </div>
@@ -111,13 +109,17 @@ if (empty($semester)){
             <h2>2nd Year</h2>
         
             <div class="dropDowns">
-                <form action="homepage.php" method="GET">
+                <form action="paymentpage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sort2By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>
                             <option value="alphabet-desc">Z-A</option>
-                            <option value="role">Role</option>
                             <option value="status">Status</option>
+                            <option value="memfee">Membership Fee</option>
+                            <option value="akwe-24">AKWE 2024</option>
+                            <option value="akwe-23">AKWE 2023</option>
                     </select>
                 </form>
             </div>
@@ -146,13 +148,17 @@ if (empty($semester)){
             <h2>3rd Year</h2>
             
             <div class="dropDowns">
-                <form action="homepage.php" method="GET">
+                <form action="paymentpage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sort3By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>
                             <option value="alphabet-desc">Z-A</option>
-                            <option value="role">Role</option>
                             <option value="status">Status</option>
+                            <option value="memfee">Membership Fee</option>
+                            <option value="akwe-24">AKWE 2024</option>
+                            <option value="akwe-23">AKWE 2023</option>
                     </select>
                 </form>
             </div>
@@ -180,13 +186,17 @@ if (empty($semester)){
        <div class="container">
             <h2>4th Year</h2>
             
-                <form action="homepage.php" method="GET">
+                <form action="paymentpage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sort4By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>
                             <option value="alphabet-desc">Z-A</option>
-                            <option value="role">Role</option>
                             <option value="status">Status</option>
+                            <option value="memfee">Membership Fee</option>
+                            <option value="akwe-24">AKWE 2024</option>
+                            <option value="akwe-23">AKWE 2023</option>
                     </select>
                 </form>
             </div>
@@ -214,13 +224,17 @@ if (empty($semester)){
         <div class="container">
             <h2>Nth Year</h2>
             
-                <form action="homepage.php" method="GET">
+                <form action="paymentpage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sortNthBy" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>
                             <option value="alphabet-desc">Z-A</option>
-                            <option value="role">Role</option>
                             <option value="status">Status</option>
+                            <option value="memfee">Membership Fee</option>
+                            <option value="akwe-24">AKWE 2024</option>
+                            <option value="akwe-23">AKWE 2023</option>
                     </select>
                 </form>
             </div>

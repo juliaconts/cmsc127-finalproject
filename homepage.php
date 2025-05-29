@@ -1,26 +1,31 @@
 <?php
-include_once 'DBConnector.php';
+    include_once 'DBConnector.php';
 
-$acadYear = $_GET['acadYear'] ?? '';
-$semester = $_GET['semester'] ?? '';
+    // Set your desired defaults here
+    $defaultAcadYear = '2023-2024';
+    $defaultSemester = '1';
 
-$sql_latest = "SELECT acadYear, semester FROM academicyear ORDER BY acadYear DESC, semester DESC LIMIT 1";
-$result_latest = $conn->query($sql_latest);
-if ($result_latest->num_rows > 0) {
-    $latest = $result_latest->fetch_assoc();
-} else {
-    $latest = [
-        'acadYear' => '',
-        'semester' => ''
-    ];
-}
+    $acadYear = $_GET['acadYear'] ?? '';
+    $semester = $_GET['semester'] ?? '';
 
-if (empty($acadYear)) {
-    $acadYear = $latest['acadYear'];
-}
-if (empty($semester)){
-    $semester = $latest['semester'];
-}
+    $sql_latest = "SELECT acadYear, semester FROM academicyear ORDER BY acadYear DESC, semester DESC LIMIT 1";
+    $result_latest = $conn->query($sql_latest);
+    if ($result_latest->num_rows > 0) {
+        $latest = $result_latest->fetch_assoc();
+    } else {
+        $latest = [
+            'acadYear' => '',
+            'semester' => ''
+        ];
+    }
+
+    // Use your defaults if nothing is set
+    if (empty($acadYear)) {
+        $acadYear = $defaultAcadYear ?: $latest['acadYear'];
+    }
+    if (empty($semester)){
+        $semester = $defaultSemester ?: $latest['semester'];
+    }
 ?>
 
 <!DOCTYPE html>
@@ -83,16 +88,7 @@ if (empty($semester)){
                     </button>
                 </a>
             </div>
-            <form action="">
-                <input type="text" placeholder="Search">
-            </form>
         </div>
-    </div>
-
-        
-    <!-- Display for search -->
-    <div class="search">
-        <!-- for shen to add whoever comes up in the search -->
     </div>
 
     <!--Advisor display-->
@@ -101,6 +97,8 @@ if (empty($semester)){
         
         <div class="dropDowns">
             <form action="homepage.php" method="GET">
+                <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                 <select name="sortAdvBy" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                         <option value="none" selected disabled hidden>Sort by</option>
                         <option value="alphabet-asc">A-Z</option>
@@ -108,7 +106,6 @@ if (empty($semester)){
                         <option value="adv-role">Role</option>
                 </select>
             </form>
-
         </div>
     </div>
 
@@ -135,6 +132,8 @@ if (empty($semester)){
         
             <div class="dropDowns">
                 <form action="homepage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sort1By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>
@@ -171,6 +170,8 @@ if (empty($semester)){
         
             <div class="dropDowns">
                 <form action="homepage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sort2By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>
@@ -207,6 +208,8 @@ if (empty($semester)){
             
             <div class="dropDowns">
                 <form action="homepage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sort3By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>
@@ -242,6 +245,8 @@ if (empty($semester)){
             <h2>4th Year</h2>
             
                 <form action="homepage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sort4By" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>
@@ -277,6 +282,8 @@ if (empty($semester)){
             <h2>Nth Year</h2>
             
                 <form action="homepage.php" method="GET">
+                    <input type="hidden" name="acadYear" value="<?php echo($acadYear); ?>">
+                    <input type="hidden" name="semester" value="<?php echo($semester); ?>">
                     <select name="sortNthBy" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
                             <option value="none" selected disabled hidden>Sort by</option>
                             <option value="alphabet-asc">A-Z</option>

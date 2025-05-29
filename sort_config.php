@@ -6,6 +6,5 @@
         'role'          => 'r.roleID ASC, lastName ASC, firstName ASC',
         'status'        => 'a.status ASC, lastName ASC, firstName ASC',
         'soa-reqs'      => '',
-        'pay-reqs'      => ''
     ];
 ?>

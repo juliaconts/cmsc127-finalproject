@@ -4,6 +4,12 @@ include 'DBConnector.php';
 $acadYear = $_GET['acadYear'] ?? '';
 $semester = $_GET['semester'] ?? '';
 
+// for sorting
+include 'sort_pay_config.php';
+$sort = $_GET['sort2By'] ?? 'none';
+$sortBy = $allowed[$sort] ?? 'm.lastName ASC, m.firstName ASC';
+// 
+
 $sql = "SELECT m.studentID, CONCAT(m.lastName, ', ', m.firstName, ' ', m.middleName) AS Name,
         CASE 
             WHEN EXISTS (
@@ -79,7 +85,7 @@ WHERE a.yearLevel = 3 AND a.acadYear = ? AND a.semester = ?
       SELECT 1 FROM pays p
       WHERE p.studentID = m.studentID AND p.acadYear = ? AND p.semester = ?
   )
-ORDER BY Name;";
+ORDER BY $sortBy;";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param(
@@ -98,7 +104,40 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
+    $rows = [];
     while ($row = $result->fetch_assoc()) {
+        //count how many are unpaid
+        $row['missingPayments'] = 0;
+        if ($row["MembershipFee"] == 'Unpaid') $row['missingPayments']++;
+        if ($row["AKWEFee2024"] == 'Unpaid') $row['missingPayments']++;
+        if ($row["AKWEFee2023"] == 'Unpaid') $row['missingPayments']++;
+        $rows[] = $row;
+    }
+
+    //sort if by status so that it resorts to be by amt of missing payments
+    if ($sort == 'status') {
+        usort($rows, function($a, $b) {
+            if ($a['Status'] !== $b['Status']) {                                              //sort  by status
+                return strcmp($b['Status'], $a['Status']);
+            }
+            if ($a['missingPayments'] !== $b['missingPayments']) {                            //sort by # of desc missing payments
+                return $b['missingPayments'] - $a['missingPayments'];
+            }
+            if ($a['MembershipFee'] !== $b['MembershipFee']) {                                //sort by desc memfee
+                return strcmp($b['MembershipFee'], $a['MembershipFee']);
+            }
+            if ($a['AKWEFee2024'] !== $b['AKWEFee2024']) {                                    //sort by desc AKWE24
+                return strcmp($b['AKWEFee2024'], $a['AKWEFee2024']);
+            }
+            if ($a['AKWEFee2023'] !== $b['AKWEFee2023']) {                                    //sort by desc AKWE23
+                return strcmp($b['AKWEFee2023'], $a['AKWEFee2023']);
+            }
+
+            return strcmp($a['Name'], $b['Name']);                          //sort by name            
+        });
+    }
+
+    foreach ($rows as $row) {
         echo "<tr>".
             "<td align='left'>".$row["Name"]."</td>".
             "<td align='center'>".$row["studentID"]."</td>".

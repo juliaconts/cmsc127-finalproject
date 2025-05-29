@@ -4,7 +4,11 @@ include_once 'DBConnector.php';
 $acadYear = $_GET['acadYear'] ?? '';
 $semester = $_GET['semester'] ?? '';
 
-$sql_latest = "SELECT acadYear, semester FROM academicyear ORDER BY acadYear DESC, semester DESC LIMIT 1";
+$sql_latest  = "SELECT acadYear, semester 
+                FROM academicyear 
+                ORDER BY acadYear, lastName 
+                DESC, semester 
+                DESC LIMIT 1";
 $result_latest = $conn->query($sql_latest);
 if ($result_latest->num_rows > 0) {
     $latest = $result_latest->fetch_assoc();
@@ -62,6 +66,15 @@ if (empty($semester)){
                             echo "<option value=\"$year\" $selected>$year</option>";
                         } 
                         ?>
+                </select>
+            </form>
+            <form action="alumnipage.php" method="GET">
+                <select name="sortAlumBy" id="sort" onchange="this.form.submit()">
+                        <option value="none" selected disabled hidden>Sort by</option>
+                        <option value="alphabet-asc">A-Z</option>
+                        <option value="alphabet-desc">Z-A</option>
+                        <option value="graduated-last">Graduated Latest</option>
+                        <option value="graduated-first">Graduated Earliest</option>
                 </select>
             </form>
             </div>

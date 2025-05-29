@@ -4,8 +4,8 @@ include_once 'DBConnector.php';
 // for sorting
 include 'sort_config.php';
 $sort = $_GET['sort2By'] ?? 'none';
-if ($sort === 'pay-reqs' or $sort ==='soa-reqs')    $sortBy = ''; // no SQL ordering, do PHP sorting only
-else                                                $sortBy = $allowed[$sort];
+if ($sort ==='soa-reqs')    $sortBy = ''; // no SQL ordering, do PHP sorting only
+else                        $sortBy = $allowed[$sort];
 // 
 
 $sql = sprintf(
@@ -42,7 +42,7 @@ $sql = sprintf(
                  m.homeAddress, m.signature, m.idPicture, f.form5, r.role, a.roleID, a.acadYear, a.semester",
         mysqli_real_escape_string($conn, $acadYear), $semester);
         
-// for sorting non pay or soa reqs
+// for sorting soa reqs
 if ($sortBy !== '') {
     $sql .= "  ORDER BY $sortBy";
 }

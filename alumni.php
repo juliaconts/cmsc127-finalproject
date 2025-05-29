@@ -3,10 +3,10 @@ include 'DBConnector.php';
 
 $yearGraduated = $_GET['yearGraduated'] ?? '';
 
-// Optional sorting setup
-include 'sort_config.php';
+// alumni sorting
+include 'sort_alum_config.php';
 $sort = $_GET['sortAlumBy'] ?? 'none';
-$sortBy = $allowed[$sort] ?? 'lastName'; // default to last name if invalid or none
+$sortBy = $allowed[$sort] ?? 'yearGraduated DESC, lastName ASC, firstName ASC'; // default to latest graduated
 
 // Build base SQL
 $sql = "SELECT DISTINCT m.studentID,
@@ -23,7 +23,7 @@ if (!empty($yearGraduated)) {
     $sql .= " WHERE a.yearGraduated = ?";
 }
 
-// Always add ORDER BY
+// for sorting
 $sql .= " ORDER BY $sortBy";
 
 // Prepare statement

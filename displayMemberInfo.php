@@ -20,7 +20,7 @@
         "<td align='center'>".$row["role"]."</td>".
         "<td align='center'>".$row["status"]."</td>";
 
-    echo "<td align='center' style='color:" . ($recordComplete ? "green" : "red") . ";'>";
+    echo "<td align='center' style='color:" . ($recordComplete ? "white" : "red") . ";'>";
         if (!$recordComplete) {
          echo "Incomplete";
         } else {
