@@ -409,33 +409,41 @@ ALTER TABLE `student`
 -- Constraints for dumped tables
 --
 
---
--- Constraints for table `advises`
---
-ALTER TABLE `advises`
-  ADD CONSTRAINT `advises_ibfk_1` FOREIGN KEY (`advisorID`) REFERENCES `advisor` (`advisorID`),
-  ADD CONSTRAINT `advises_ibfk_2` FOREIGN KEY (`acadYear`) REFERENCES `academicyear` (`acadYear`);
+ALTER TABLE advises
+  ADD CONSTRAINT advises_ibfk_1 FOREIGN KEY (advisorID) REFERENCES advisor (advisorID),
+  ADD CONSTRAINT advises_ibfk_2 FOREIGN KEY (acadYear,`semester`) REFERENCES academicyear (acadYear, semester);
 
 --
--- Constraints for table `alumni`
+-- Constraints for table alumni
 --
-ALTER TABLE `alumni`
-  ADD CONSTRAINT `alumni_ibfk_1` FOREIGN KEY (`studentID`) REFERENCES `member` (`studentID`);
+ALTER TABLE alumni
+  ADD CONSTRAINT alumni_ibfk_1 FOREIGN KEY (studentID) REFERENCES member (studentID);
 
 --
--- Constraints for table `assigned`
+-- Constraints for table assigned
 --
-ALTER TABLE `assigned`
-  ADD CONSTRAINT `assigned_ibfk_1` FOREIGN KEY (`acadYear`) REFERENCES `academicyear` (`acadYear`),
-  ADD CONSTRAINT `assigned_ibfk_2` FOREIGN KEY (`studentID`) REFERENCES `member` (`studentID`),
-  ADD CONSTRAINT `assigned_ibfk_3` FOREIGN KEY (`roleID`) REFERENCES `roles` (`roleID`);
+ALTER TABLE assigned
+  ADD CONSTRAINT assigned_ibfk_1 FOREIGN KEY (acadYear,`semester`) REFERENCES academicyear (acadYear, semester),
+  ADD CONSTRAINT assigned_ibfk_2 FOREIGN KEY (studentID) REFERENCES member (studentID),
+  ADD CONSTRAINT assigned_ibfk_3 FOREIGN KEY (roleID) REFERENCES roles (roleID);
 
 --
--- Constraints for table `form5`
+-- Constraints for table form5
 --
-ALTER TABLE `form5`
-  ADD CONSTRAINT `fk_form5_academicyear` FOREIGN KEY (`acadYear`,`semester`) REFERENCES `academicyear` (`acadYear`, `semester`),
-  ADD CONSTRAINT `fk_form5_member` FOREIGN KEY (`studentID`) REFERENCES `member` (`studentID`);
+ALTER TABLE form5
+  ADD CONSTRAINT fk_form5_academicyear FOREIGN KEY (acadYear,`semester`) REFERENCES academicyear (acadYear, semester),
+  ADD CONSTRAINT fk_form5_member FOREIGN KEY (studentID) REFERENCES member (studentID);
+
+--
+-- Constraints for table pays
+--
+ALTER TABLE pays
+  ADD CONSTRAINT fk_pays_academicyear FOREIGN KEY (acadYear,`semester`) REFERENCES academicyear (acadYear, semester),
+  ADD CONSTRAINT fk_pays_member FOREIGN KEY (studentID) REFERENCES member (studentID),
+  ADD CONSTRAINT fk_pays_payment FOREIGN KEY (paymentID) REFERENCES payment (paymentID),
+  ADD CONSTRAINT pays_ibfk_1 FOREIGN KEY (paymentID) REFERENCES payment (paymentID),
+  ADD CONSTRAINT pays_ibfk_2 FOREIGN KEY (studentID) REFERENCES student (studentID),
+  ADD CONSTRAINT pays_ibfk_3 FOREIGN KEY (acadYear) REFERENCES academicyear (acadYear);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

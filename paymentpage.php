@@ -29,16 +29,20 @@ if (empty($semester)){
         <title>Komsai.Org Database</title>
         <meta charset = "UTF-8">
         <meta name = "author" content = "Contreras-DelRosario-Quindao-Verde">
-        <link rel="stylesheet" type="text/css" href="homeDesign.css">
+        <link rel="stylesheet" type="text/css" href="paymentDesign.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0&icon_names=arrow_forward_ios" />    
     </head>
 
     <body>
         <header>
             <img src="komsai_logo.png" alt="icon" width="60px" height="60px">
 		    <h1 id="title">UPV KOMSAI.ORG</h1>
+            <a href="homepage.php">
+                <button id="back-button" type="button"><span class="material-symbols-outlined">arrow_forward_ios</span></button>
+            </a>
 	    </header>
         <hr>
 
@@ -47,7 +51,7 @@ if (empty($semester)){
         <div style="display: flex; align-items: flex-end; gap: 30px;">
 
             <div class="left-controls">
-            <form name="filterAYSem" method="get" id="filterAYSem" action="homepage.php">
+            <form name="filterAYSem" method="get" id="filterAYSem" action="paymentpage.php">
                 <label for="acadYear">Academic Year </label>
                 <select name="acadYear" id="AY">
                     <?php include 'allAcadYear.php'; ?>
@@ -59,34 +63,6 @@ if (empty($semester)){
             </form>
             </div>
         </div>
-
-        <div class="right-controls">
-            <div class="top-actions" style="display: flex; gap: 10px;">
-                <a href="paymentpage.php">
-                    <button type="button" style="background-color: #0049AD; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                        Payment
-                    </button>
-                </a>
-                <a href="alumnipage.php">
-                    <button type="button" style="background-color: #0049AD; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                        Alumni
-                    </button>
-                </a>
-                <a href="addMemberDetails.php">
-                    <button type="button" style="background-color: #0049AD; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                        Add Member
-                    </button>
-                </a>
-                <a href="addAdvisorDetails.php">
-                    <button type="button" style="background-color: #001E47; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                        Add Advisor
-                    </button>
-                </a>
-            </div>
-            <form action="">
-                <input type="text" placeholder="Search">
-            </form>
-        </div>
     </div>
 
         
@@ -94,40 +70,6 @@ if (empty($semester)){
     <div class="search">
         <!-- for shen to add whoever comes up in the search -->
     </div>
-
-    <!--Advisor display-->
-     <div class="container">
-        <h2>Advisor</h2>
-        
-        <div class="dropDowns">
-            <form action="homepage.php" method="GET">
-                <select name="sortAdvBy" id="sort" onchange="sessionStorage.setItem('scrollY', window.scrollY); this.form.submit()">
-                        <option value="none" selected disabled hidden>Sort by</option>
-                        <option value="alphabet-asc">A-Z</option>
-                        <option value="alphabet-desc">Z-A</option>
-                        <option value="adv-role">Role</option>
-                </select>
-            </form>
-
-        </div>
-    </div>
-
-        <div class="scrollbox">
-            <table style="width:100%">
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Academic Year</th>
-                    <th>Semester</th>
-                    <th>AdvisorID</th>
-                    <th></th>
-                </tr>
-            <?php
-                include 'advisor.php';
-            ?>
-            </table>
-        </div>
-        <br>
 
     <!--First Year display-->
         <div class="container">
@@ -141,7 +83,6 @@ if (empty($semester)){
                             <option value="alphabet-desc">Z-A</option>
                             <option value="role">Role</option>
                             <option value="status">Status</option>
-                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
             </div>
@@ -152,14 +93,14 @@ if (empty($semester)){
                 <tr>
                     <th>Name</th>
                     <th>ID</th>
-                    <th>Role</th>
+                    <th>Membership Fee</th>
+                    <th>AKWE Fee 2024</th>
+                    <th>AKWE Fee 2023</th>
                     <th>Status</th>
-                    <th>SOA Reqs</th>
-                    <th>Missing Reqs</th>
                     <th></th>
                 </tr>
             <?php
-                include 'firstyear.php';
+                include 'firstyearPayment.php';
             ?>
             </table>
         </div>
@@ -177,7 +118,6 @@ if (empty($semester)){
                             <option value="alphabet-desc">Z-A</option>
                             <option value="role">Role</option>
                             <option value="status">Status</option>
-                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
             </div>
@@ -188,14 +128,14 @@ if (empty($semester)){
                 <tr>
                     <th>Name</th>
                     <th>ID</th>
-                    <th>Role</th>
+                    <th>Membership Fee</th>
+                    <th>AKWE Fee 2024</th>
+                    <th>AKWE Fee 2023</th>
                     <th>Status</th>
-                    <th>SOA Reqs</th>
-                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
-                include 'secondyear.php';
+                include 'secondyearPayment.php';
             ?>
             </table>
         </div>
@@ -213,7 +153,6 @@ if (empty($semester)){
                             <option value="alphabet-desc">Z-A</option>
                             <option value="role">Role</option>
                             <option value="status">Status</option>
-                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
             </div>
@@ -224,14 +163,14 @@ if (empty($semester)){
                <tr>
                     <th>Name</th>
                     <th>ID</th>
-                    <th>Role</th>
+                    <th>Membership Fee</th>
+                    <th>AKWE Fee 2024</th>
+                    <th>AKWE Fee 2023</th>
                     <th>Status</th>
-                    <th>SOA Reqs</th>
-                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
-                include 'thirdyear.php';
+                include 'thirdyearPayment.php';
             ?>
             </table>
         </div>
@@ -248,7 +187,6 @@ if (empty($semester)){
                             <option value="alphabet-desc">Z-A</option>
                             <option value="role">Role</option>
                             <option value="status">Status</option>
-                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
             </div>
@@ -259,14 +197,14 @@ if (empty($semester)){
                 <tr>
                     <th>Name</th>
                     <th>ID</th>
-                    <th>Role</th>
+                    <th>Membership Fee</th>
+                    <th>AKWE Fee 2024</th>
+                    <th>AKWE Fee 2023</th>
                     <th>Status</th>
-                    <th>SOA Reqs</th>
-                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
-                include 'fourthyear.php';
+                include 'fourthyearPayment.php';
             ?>
             </table>
         </div>
@@ -283,7 +221,6 @@ if (empty($semester)){
                             <option value="alphabet-desc">Z-A</option>
                             <option value="role">Role</option>
                             <option value="status">Status</option>
-                            <option value="soa-reqs">SOA Reqs</option>
                     </select>
                 </form>
             </div>
@@ -294,14 +231,14 @@ if (empty($semester)){
                 <tr>
                     <th>Name</th>
                     <th>ID</th>
-                    <th>Role</th>
+                    <th>Membership Fee</th>
+                    <th>AKWE Fee 2024</th>
+                    <th>AKWE Fee 2023</th>
                     <th>Status</th>
-                    <th>SOA Reqs</th>
-                    <th>Missing Reqs</th>
                     <th></th>
                 <tr>
             <?php
-                include 'nthyear.php';
+                include 'nthyearPayment.php';
             ?>
             </table>
         </div>
