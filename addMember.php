@@ -68,6 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $acadYear = $acadRow['acadYear'];
         $semester = $acadRow['semester'];
 
+        
+
         $checkAssigned = "SELECT COUNT(*) FROM assigned WHERE semester='$semester' AND acadYear='$acadYear' AND roleID='$roleID' AND studentID='$studentID'";
         $assignedResult = mysqli_query($conn, $checkAssigned);
         $assignedCount = mysqli_fetch_row($assignedResult)[0];
@@ -95,13 +97,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // insert into assigned table
         $sqlAssigned = "INSERT INTO assigned (semester, acadYear, roleID, studentID, yearLevel, status, contactNo, presentAddress)
-                        VALUES (
-                            '$semester', '$acadYear', '$roleID', '$studentID', " .
-                            ($yearLevel !== null && $yearLevel !== "" ? "'$yearLevel'" : "NULL") . ", " .
-                            ($status !== null && $status !== "" ? "'$status'" : "NULL") . ", " .
-                            ($contactNo !== null && $contactNo !== "" ? "'$contactNo'" : "NULL") . ", " .
-                            ($presentAddress !== null && $presentAddress !== "" ? "'$presentAddress'" : "NULL") .
-                        ")";
+                VALUES (
+                    '$semester', '$acadYear', '$roleID', '$studentID', " .
+                    ($yearLevel !== null && $yearLevel !== "" ? "'$yearLevel'" : "NULL") . ", " .
+                    ($status !== null && $status !== "" ? "'$status'" : "NULL") . ", " .
+                    ($contactNo !== null && $contactNo !== "" ? "'$contactNo'" : "NULL") . ", " .
+                    ($presentAddress !== null && $presentAddress !== "" ? "'$presentAddress'" : "NULL") .
+                ")";
         if (!mysqli_query($conn, $sqlAssigned)) {
             $conn->rollback();
             echo "<script>alert('Error assigning role: " . addslashes(mysqli_error($conn)) . "'); window.history.back();</script>";

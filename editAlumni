@@ -1,4 +1,755 @@
 <?php
+ob_start(); // Prevent accidental output
+session_start();
+include 'DBConnector.php';
+
+// Set JSON content-type early for fetch() responses
+header("Content-Type: application/json");
+
+// Helper to detect if this is a fetch/AJAX call
+function isApiRequest() {
+    return $_SERVER['REQUEST_METHOD'] === 'POST' || 
+           ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['fetch']));
+}
+
+// Handle unauthenticated access differently for API and normal browser
+if (!isset($_SESSION['user_id'])) {
+    if (isApiRequest()) {
+        echo json_encode(["status" => "error", "message" => "Not logged in"]);
+    } else {
+        // Switch to text/html for regular browser redirect
+        header("Content-Type: text/html");
+        header("Location: login.php");
+    }
+    exit;
+}
+
+// ==== POST a new message ====
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'])) {
+    $content = trim($_POST['content']);
+    $acct_user_id = $_SESSION['user_id'] ?? null;
+
+    $reply_to = isset($_POST['reply_to']) && is_numeric($_POST['reply_to']) ? intval($_POST['reply_to']) : null;
+
+    if (!$acct_user_id || $content === '') {
+        echo json_encode(["status" => "error", "message" => "Invalid input"]);
+        exit;
+    }
+
+    $stmt1 = $conn->prepare("INSERT INTO posts (content, reply_to) VALUES (?, ?)");
+    $stmt1->bind_param("si", $content, $reply_to);
+
+    if ($stmt1->execute()) {
+        $post_id = $conn->insert_id;
+
+        $stmt2 = $conn->prepare("INSERT INTO posting (postID, id) VALUES (?, ?)");
+        $stmt2->bind_param("ii", $post_id, $acct_user_id);
+
+        if ($stmt2->execute()) {
+            echo json_encode(["status" => "success", "postID" => $post_id]);
+            exit;
+        }
+    }
+
+    echo json_encode(["status" => "error", "message" => "Database error"]);
+    exit;
+}
+
+// ==== GET all posts ====
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['fetch']) && $_GET['fetch'] === 'posts') {
+    $sql = "SELECT posts.postID, posts.content, posts.reply_to
+            FROM posting 
+            JOIN posts ON posting.postID = posts.postID 
+            ORDER BY posts.postID DESC";
+
+    $result = $conn->query($sql);
+
+    $posts = [];
+    while ($row = $result->fetch_assoc()) {
+        $posts[] = [
+            'postID' => $row['postID'],
+            'content' => $row['content'],
+            'reply_to' => $row['reply_to'] === null ? null : intval($row['reply_to'])
+        ];
+    }
+
+    echo json_encode($posts);
+    exit;
+}
+
+// ==== Not an API call, continue with full HTML page ====
+header("Content-Type: text/html");
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>UNCENSORED</title>
+        <meta charset = "UTF-8">
+        <meta name = "author" content = "Contreras-DelRosario-Quindao">
+        <link rel="icon" type="image/x-icon" href="Images/Icon.png">
+
+        <link href="https://fonts.googleapis.com/css2?family=Pangolin&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&icon_names=flag,reply" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+        <link rel="stylesheet" type="text/css" href="styling.css">
+        <link rel="stylesheet" type="text/css" href="styling-fw.css">
+    </head>
+
+    <body>
+        <nav>
+            <a href="homepage.html">Home</a>
+            <a href="ganaps.html">Ganaps</a>
+            <a href="yearbook.html">Yearbook</a>
+            <a href="freedomwall.php">Freedom Wall</a>
+            &nbsp; &nbsp;
+            <a href="account.php">
+                <img class="acc-icon" src="./Images/Icons/Account.png">
+            </a>              
+        </nav>
+
+        <div class="freedomWall">
+            <!-- <h1>Freedom Wall</h1> -->
+            
+            <div id="post-box" class="post-box">
+                <div class id="reply-banner" class="reply-banner">
+                    <span id="reply-text"></span>
+                    <button id="cancel-reply" class="cancel-reply" type="button" alt="Cancel"><span id="cancel-button" class="material-symbols-outlined">close</span>
+                </div>
+                <textarea id="post-input" placeholder="Write your message..."></textarea>
+                <br>
+                <button id="post-button">Post</button>
+            </div>
+
+            <div id="posts-container" class="posts-container">
+                <!-- Posts will show here -->
+            </div>
+        </div>
+
+        <script src="scripts-freedomwall.js"></script>
+
+        <div class="poll">
+            <div class="poll-header">
+            <button id="view-other-polls-btn" class="poll-modal-btn small-btn" title="View">
+                <span class="material-symbols-outlined" style="font-size:18px;">visibility</span>
+            </button>
+            </div>
+            <div id="poll-container"></div>
+            <div id="other-polls-modal" class="poll-modal" style="display:none;">
+                <div class="poll-modal-content">
+                    <span id="close-other-polls" class="poll-modal-close">&times;</span>
+                    <div id="other-polls-list"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="spotify">
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3UDC6HwoPcNSZwUdY0nzKI?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+
+        <script src="scripts-poll.js"></script>
+        
+    </body>
+</html>
+
+* {
+  font-family: Pangolin, sans-serif;
+}
+
+.freedomWall {
+  width: 810px;
+  height: 600%;
+  left: 8%;
+  top: 15%;
+  position: absolute;
+  background-color: #004aad;
+}
+
+
+.poll{
+  width: 29.5%;
+  height: 58%;
+  top: 15%;
+  left: 62%;
+  background: #fcf9ff;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  position: fixed;
+   box-sizing: border-box;
+}
+
+.poll h2 {
+  font-size: 1.7rem;
+  margin-bottom: 1rem;
+  margin-top: 3.8rem;;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+}
+
+.poll label {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  margin: 10px 0;
+  background-color: white;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.poll label, .poll-option {
+  width: 90%;               
+  margin: 0 auto 8px auto; 
+  padding: 10px 32px;        
+  display: block;            
+  text-align: left;
+  box-sizing: border-box;   
+  transition: all 0.3s ease;
+}
+
+.poll label:hover {
+  background-color: #eae4f2;
+  border-color: #5f329b;
+}
+
+.poll-option {
+  display: flex;
+  font-size: large;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f4f4f4;
+  border-radius: 12px;
+  margin-bottom: 5px;
+  border: 2px solid transparent;
+  transition: 0.3s ease;
+}
+
+#option-id {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f4f4f4;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  border: 2px solid transparent;
+  transition: 0.3s ease;
+}
+
+.poll-option input[type="radio"] {
+  margin-right: 10px;
+}
+
+.poll-option:hover {
+  background-color: #eae4f2;
+}
+
+.poll-option.selected {
+  background-color: #5f329b;
+  border-color: #3a205c;
+  color: #fff;
+}
+
+.poll-option.selected:hover {
+  background-color: #5f329b;
+  border-color: #3a205c;
+  color: #fff;
+}
+
+.poll-option.selected .vote-info {
+  color: #fff;
+}
+
+.vote-info {
+  margin-left: auto;
+  font-weight: normal;
+  color: #666;
+  margin-left: 1.2rem;
+}
+
+.poll button {
+  display: block;
+  width: 90%;
+  padding: 12px;
+  background-color: #5f329b;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-left: auto; 
+  margin-right: auto;  
+  margin-top: 1rem;
+  transition: background 0.3s ease;
+  align-items: center;
+}
+
+.poll button:hover {
+  background-color: #004aad;
+}
+
+
+/*pop-up page for other polls*/
+.poll-modal {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  overflow: auto;
+  background: rgba(0,0,0,0.5);
+}
+
+.poll-modal-content {
+  background: #fcf9ff;
+  margin: 5% auto;
+  padding: 24px 32px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+}
+
+/* modal card styling */
+.modal-poll-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+  padding: 18px 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-poll-question {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #3a1f5d;
+}
+
+.modal-poll-options {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.modal-poll-option {
+  background: #5f329b;
+  border-radius: 12px;
+  padding: 8px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  color: white;
+}
+
+.modal-poll-total {
+  font-size: 0.98rem;
+  color: #c1bfbf;
+  margin-top: 6px;
+  text-align: right;
+}
+
+.poll-modal-close {
+  position: absolute;
+  top: 12px; right: 18px;
+  height: 36px;
+  width: 36px;
+  display: flex;
+  font-size: 2rem;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  background-color: #5f329b;
+  border-radius: 50%;
+}
+
+.poll-modal-btn.small-btn {
+    position: absolute;
+    right: 6%;
+    z-index: 20;
+    padding: 4px 8px;
+    font-size: 1.1rem;
+    border-radius: 50%;
+    background: #5f329b;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+    transition: background 0.2s;
+}
+.poll-modal-btn.small-btn:hover {
+    background: #3a205c;
+}
+
+.spotify {
+  width: 450px;
+  height: 155px;
+  box-sizing: border-box;
+  left: 62%;
+  top: 74%;
+  position: fixed;
+  z-index: -10;
+}
+
+/* .freedomWall h1 {
+  padding-top: 25px;
+  padding-bottom: 25px;
+} */
+
+.wall-container {
+  position: relative;
+  max-width: 700px;
+  margin: 30px auto;         /* Centers the container */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #ccc;
+  box-sizing: border-box;
+}
+
+#reply-banner {
+  align-items: flex-end;
+  width: 20%;
+  margin-top: 5px;
+}
+
+#cancel-reply {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 20px;
+  cursor: pointer;
+  position: absolute;
+  margin-left: 165px;
+  margin-bottom: 2.5px;
+  padding: 0;
+  /* margin-left: 680px; */
+}
+
+#cancel-button:hover {
+  opacity: 0.9;
+  color: maroon;
+}
+
+#reply-text {
+  display: inline;
+  white-space: nowrap;
+  align-items: flex-end;
+  padding-bottom: 0;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: white;
+}
+
+.post-box {
+  margin-left: 15px;
+  padding-top: 20px;
+}
+
+.post-box textarea {
+  position: relative;
+  cursor: text;
+  width: 98%;
+  height: 80px;
+  padding: 10px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  resize: none;
+  box-sizing: border-box;
+  margin-top: 0;
+  background-color: #F8FFFF;
+  /* background-color: white; */
+}
+
+.post-box button {
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-left: 707px;
+}
+
+.posts-container {
+  margin-top: 20px;
+  overflow: visible;
+  padding-right: 10px;
+  margin-right: 90px;
+}
+
+.post {
+  /* border-top: 1px solid #ccc; */
+  border: 10px solid #004aad;
+  background-color: #F8FFFF;
+  /* background-color: white; */
+  padding: 15px 0;
+  width: 110%;
+  box-sizing: border-box;
+  margin-left: 15px;
+}
+
+.post-footer {
+  border-top: 1px solid black;
+}
+
+.message {
+  margin-left: 20px;
+  margin-bottom: 10px;
+  padding: 10px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 90%;
+}
+
+.collapse{
+  max-height: 200px;
+}
+
+.postID {
+  color: #004aad;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.postID:hover {
+  opacity: 0.9;
+  color: lightblue;
+  cursor: pointer;
+}
+
+.repID {
+  color: blue;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.repID:hover {
+  opacity: 0.9;
+  color: lightblue;
+  cursor: pointer;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.username {
+  max-width: 200px;
+  white-space: nowrap;
+  word-wrap: break-word;
+  font-weight: bold;
+}
+
+.user-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  margin-left: 20px;
+}
+
+.material-symbols-outlined {
+  font-size: 25px;
+}
+
+.reply-button, .flag-button {
+  background-color: #F8FFFF;
+  /* background-color: white; */
+  border: none;
+}
+
+.material-symbols-outlined:hover {
+  opacity: 0.9;
+  color: lightblue;
+  cursor: pointer;
+}
+
+.reply-button {
+  margin-left: 410px;
+}
+
+.flag-button {
+  margin-left: 16px;
+}
+
+.replies {
+  max-width: 100%;
+}
+
+
+<?php
+
+session_start();
+include 'DBConnector.php';
+
+$error = " ";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $email = $_POST['email'];
+    $psw = $_POST['psw'];
+
+    // Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Please enter a valid email address.";
+    } else {
+        $sql = "SELECT * FROM users WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $email);
+
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+
+            if (!$user) {
+                $error = "This email is not registered.";
+            } elseif (!password_verify($psw, $user['password'])) {
+                $error = "Incorrect password.";
+            } else {
+                $_SESSION['user_id'] = $user['id'];
+
+                // Set a random poll for this session after successful login
+                unset($_SESSION['poll_id']);
+                $pollRes = $conn->query("SELECT poll_id FROM poll ORDER BY RAND() LIMIT 1");
+                if ($pollRes && $pollRes->num_rows > 0) {
+                    $row = $pollRes->fetch_assoc();
+                    $_SESSION['poll_id'] = (int)$row['poll_id'];
+                }
+
+                header("Location: homepage.html");
+                exit;
+            }
+        } else {
+            $error = "Something went wrong. Please try again later.";
+        }
+    }
+}
+
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UNCENSORED 23</title>
+    <meta charset="UTF-8">
+    <meta name="author" content="Contreras-DelRosario-Quindao">
+    <link rel="stylesheet" type="text/css" href="styling-login.css">
+    <link rel="icon" type="image/x-icon" href="./Images/Icons/Icon.png">  
+    <link rel="preload" href="Images/Logo.png" as="image">
+    <script src="scripts-login.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pangolin&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="left-panel">
+            <img src="Images/Logo.png" alt="logo">
+        </div>
+
+        <div class="right-panel">
+            <form method="POST" action="login.php">
+                <br><br><br>
+                <?php if ($error): ?>
+                    <p style="color: red;"><?= $error ?></p>
+                <?php endif; ?>
+
+                <label for="email"><b>Email</b></label>
+                <input type="text" id="email" placeholder="Enter Email" name="email" required>
+                <br>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" id="password" placeholder="Enter Password" name="psw" required>
+                <br>
+
+                <button type="submit">Login</button>
+                <br>
+                <p> Don't have an account? <a href="signup.php">SIGN UP</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+
+<?php
+session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+include 'DBConnector.php';
+header("Content-Type: application/json");
+
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(["status" => "error", "message" => "Not logged in"]);
+    exit;
+}
+
+// Select a random poll only once per session
+
+// Use the poll ID stored in the session
+$poll_id = $_SESSION['poll_id'];
+
+// Fetch poll details
+$pollStmt = $conn->prepare("SELECT question FROM poll WHERE poll_id = ?");
+if (!$pollStmt) {
+    echo json_encode(["status" => "error", "message" => "Poll prepare failed: " . $conn->error]);
+    exit;
+}
+$pollStmt->bind_param("i", $poll_id);
+$pollStmt->execute();
+$pollResult = $pollStmt->get_result();
+
+if ($pollResult->num_rows === 0) {
+    echo json_encode(["status" => "error", "message" => "Poll not found"]);
+    exit;
+}
+
+$pollRow = $pollResult->fetch_assoc();
+
+// Fetch poll options
+$opts = $conn->prepare("SELECT id AS option_id, option_text FROM poll_options WHERE poll_id = ?");
+if (!$opts) {
+    echo json_encode(["status" => "error", "message" => "Options prepare failed: " . $conn->error]);
+    exit;
+}
+$opts->bind_param("i", $poll_id);
+$opts->execute();
+$options = $opts->get_result()->fetch_all(MYSQLI_ASSOC);
+$opts->close();
+
+if (empty($options)) {
+    echo json_encode(["status" => "error", "message" => "No options found for this poll"]);
+    exit;
+}
+
+// Prepare the response
+$response = [
+    "status" => "success",
+    "poll_id" => $poll_id,
+    "question" => $pollRow['question'],
+    "options" => $options
+];
+
+echo json_encode($response);
+?>
+
+
+<?php
 include 'DBConnector.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $alumniID = $_POST['alumniID'];
