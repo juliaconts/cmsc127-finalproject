@@ -1,0 +1,6 @@
+step 1. open db in phpmyadmin
+step 2. click on table you want to import the data in
+step 3. click import
+step 4. upload file
+step 5. check in Format if it is in csv
+step 6. press go at the end
