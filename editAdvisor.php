@@ -3,29 +3,38 @@ include 'DBConnector.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $advisorID = $_POST['advisorID'];
 
-    // Modified SQL to fetch from 'advisor' and 'advises' tables
     $sql = "SELECT a.advisorID, a.firstName, a.middleInitial, a.lastName,
                    adv.type, adv.acadYear, adv.semester
             FROM advisor a
             LEFT JOIN advises adv ON a.advisorID = adv.advisorID
-            WHERE a.advisorID = '$advisorID'"; // Removed the AND condition
-
+            WHERE a.advisorID = '$advisorID'";
     $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) { // Changed to > 0 to handle multiple advises entries
-        // Fetch the advisor's base data.  We'll assume the first row has the advisor's name.
+    if ($result && $result->num_rows > 0) {
         $advisor_data = null;
         $advises_data = [];
         while ($row = $result->fetch_assoc()) {
-            if ($advisor_data == null){
-                $advisor_data = $row;
+            if ($advisor_data == null) {
+                $advisor_data = [
+                    'advisorID' => $row['advisorID'],
+                    'firstName' => $row['firstName'],
+                    'middleInitial' => $row['middleInitial'],
+                    'lastName' => $row['lastName']
+                ];
             }
-            //Organize the advises data.
-            $advises_data[] = [
-                'type' => $row['type'],
-                'acadYear' => $row['acadYear'],
-                'semester' => $row['semester']
-            ];
+            if ($row['acadYear'] && $row['semester']) {
+                $advises_data[] = [
+                    'type' => $row['type'],
+                    'acadYear' => $row['acadYear'],
+                    'semester' => $row['semester']
+                ];
+            }
+        }
+        // get all academic years for dropdown
+        $acadYearOptions = '';
+        $acadYearRes = $conn->query("SELECT DISTINCT acadYear FROM academicyear ORDER BY acadYear DESC");
+        while ($yr = $acadYearRes->fetch_assoc()) {
+            $acadYearOptions .= '<option value="' . htmlspecialchars($yr['acadYear']) . '">' . htmlspecialchars($yr['acadYear']) . '</option>';
         }
 ?>
         <!DOCTYPE html>
@@ -106,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </style>
         </head>
         <body>
-            <form action="./updates/updateAdvisor.php" method="post">
+            <form action="updateAdvisor.php" method="post">
                 <h2>Edit Advisor</h2>
                 <label for="advisorID">Advisor ID:</label>
                 <input type="text" name="advisorID" value="<?php echo $advisor_data['advisorID']; ?>" required><br>
@@ -117,81 +126,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="lastName">Last Name:</label>
                 <input type="text" name="lastName" value="<?php echo $advisor_data['lastName']; ?>" required><br>
 
-                <label for="acadYear">Academic Year:</label>
-                <select class="expand" name="acadYear">
-                    <option value="" disabled>-- Select Academic Year --</option>
+                <h3>Advises (per Academic Year & Semester)</h3>
+                <table class="advises-table">
+                    <tr>
+                        <th>Academic Year</th>
+                        <th>Semester</th>
+                        <th>Type</th>
+                        <th>Update?</th>
+                    </tr>
                     <?php
-                    // Fetch distinct academic years from the database
-                    $acadYears = [];
-                    foreach($advises_data as $advisory){
-                        if (!in_array($advisory['acadYear'], $acadYears)){
-                            $acadYears[] = $advisory['acadYear'];
-                        }
+                    // show all advises for this advisor
+                    foreach ($advises_data as $i => $adv) {
+                        echo "<tr>";
+                        echo "<td><input type='text' name='adv_acadYear[]' value='" . htmlspecialchars($adv['acadYear']) . "' readonly></td>";
+                        echo "<td><input type='number' name='adv_semester[]' value='" . htmlspecialchars($adv['semester']) . "' readonly></td>";
+                        echo "<td>
+                                <select name='adv_type[]'>
+                                    <option value='Advisor' " . ($adv['type'] == 'Advisor' ? 'selected' : '') . ">Advisor</option>
+                                    <option value='Co-Advisor' " . ($adv['type'] == 'Co-Advisor' ? 'selected' : '') . ">Co-Advisor</option>
+                                </select>
+                            </td>";
+                        echo "<td><input type='checkbox' name='adv_update[]' value='$i'></td>";
+                        echo "</tr>";
                     }
-                    foreach ($acadYears as $year) {
-                        echo "<option value=\"$year\"";
-                        if (in_array($year, array_column($advises_data, 'acadYear'))) {
-                            echo " selected";  // Select the year if it matches
-                        }
-                        echo ">$year</option>";
-                    }
-                    ?></select><br>
-
-                <label>Semester:</label>
-                <div class="semester-group">
-                    <input type="radio" id="sem1" name="semester[]" value="1" >
-                    <label for="sem1">1st Semester</label>
-                    <input type="radio" id="sem2" name="semester[]" value="2" >
-                    <label for="sem2">2nd Semester</label>
-                </div>
-
-                <label for="type">Type:</label>
-                <select class="expand" name="type">
-                    <option value="" disabled>-- Select Type --</option>
-                    <?php
-                    $types = ['Advisor', 'Co-Advisor'];
-                    foreach($types as $type){
-                         echo "<option value=\"$type\"";
-                         if (in_array($type, array_column($advises_data, 'type'))) {
-                            echo " selected";
-                         }
-                         echo ">$type</option>";
-                    }
-                    ?>
-                </select><br>
+                ?></table><br>
+                <h4>Add New Advises Entry</h4>
+                <label for="new_acadYear">Academic Year:</label>
+                <select name="new_acadYear">
+                    <option value="">-- Select Academic Year --</option>
+                    <?php echo $acadYearOptions; ?>
+                </select>
+                <label for="new_semester">Semester:</label>
+                <select name="new_semester">
+                    <option value="">-- Select Semester --</option>
+                    <option value="1">1st Semester</option>
+                    <option value="2">2nd Semester</option>
+                </select>
+                <label for="new_type">Type:</label>
+                <select name="new_type">
+                    <option value="">-- Select Type --</option>
+                    <option value="Advisor">Advisor</option>
+                    <option value="Co-Advisor">Co-Advisor</option>
+                </select>
+                <br>
                 <button type="submit">Update Advisor</button>
             </form>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const acadYearSelect = document.querySelector('select[name="acadYear"]');
-            const sem1Radio = document.getElementById('sem1');
-            const sem2Radio = document.getElementById('sem2');
-
-            function updateSemesterRadios() {
-                const selectedYear = acadYearSelect.value;
-                let hasSem1 = false;
-                let hasSem2 = false;
-                <?php
-                    foreach ($advises_data as $advisory) {
-                        echo "if ('" . $advisory['acadYear'] . "' === selectedYear) {";
-                        echo "    if (" . $advisory['semester'] . " === 1) { hasSem1 = true; }";
-                        echo "    if (" . $advisory['semester'] . " === 2) { hasSem2 = true; }";
-                        echo "}";
-                    }
-                ?>
-                sem1Radio.checked = hasSem1;
-                sem2Radio.checked = hasSem2;
-
-                //If neither semester is selected, select both.
-                if (!hasSem1 && !hasSem2){
-                    sem1Radio.checked = true;
-                    sem2Radio.checked = true;
-                }
-            }
-            acadYearSelect.addEventListener('change', updateSemesterRadios);
-            updateSemesterRadios(); // Initial update on page load
-        });
-        </script>
         </body>
         </html>
         <?php

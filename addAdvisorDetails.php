@@ -1,4 +1,12 @@
-
+<?php
+include 'DBConnector.php';
+$acadYearOptions = '';
+$sql = "SELECT DISTINCT acadYear FROM academicyear ORDER BY acadYear DESC";
+$result = $conn->query($sql);
+while ($row = $result->fetch_assoc()) {
+    $acadYearOptions .= '<option value="' . htmlspecialchars($row['acadYear']) . '">' . htmlspecialchars($row['acadYear']) . '</option>';
+}
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html>
@@ -53,7 +61,6 @@
         .expand {
             width: 100%;
             box-sizing: border-box;
-
         }
 
         button[type="submit"] {
@@ -71,6 +78,24 @@
             background-color: #0049AD;
         }
     </style>
+    <script>
+    // Show input for new academic year if "Other" is selected
+    document.addEventListener('DOMContentLoaded', function() {
+        const acadYearSelect = document.getElementById('acadYearSelect');
+        const newAcadYearInput = document.getElementById('newAcadYearInput');
+        if (acadYearSelect) {
+            acadYearSelect.addEventListener('change', function() {
+                if (this.value === 'other') {
+                    newAcadYearInput.style.display = 'block';
+                    newAcadYearInput.required = true;
+                } else {
+                    newAcadYearInput.style.display = 'none';
+                    newAcadYearInput.required = false;
+                }
+            });
+        }
+    });
+    </script>
 </head>
 <body>
     <form action="addAdvisor.php" method="post">
@@ -102,21 +127,12 @@
             <tr>
                 <td class="tlabel">Academic Year</td>
                 <td>
-                    <select name="acadYear" required>
+                    <select name="acadYear" id="acadYearSelect" required>
                         <option value="">--Select Academic Year--</option>
-                        <option value="2022-2023">2022-2023</option>
-                        <option value="2023-2024">2023-2024</option>
-                        <option value="2024-2025">2024-2025</option>
-                        <option value="2025-2026">2025-2026</option>
-                        <option value="2026-2027">2026-2027</option>
+                        <?php echo $acadYearOptions; ?>
+                        <option value="other">Other (Add new year)</option>
                     </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="tlabel">Semester</td>
-                <td>
-                    <input type="radio" name="semester" value="1" required>1<br>
-                    <input type="radio" name="semester" value="2">2<br>
+                    <input type="text" name="newAcadYear" id="newAcadYearInput" placeholder="e.g. 2025-2026" style="display:none; margin-top:5px;">
                 </td>
             </tr>
         </table>

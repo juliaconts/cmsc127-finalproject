@@ -7,63 +7,93 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $middleInitial = $_POST['middleInitial'];
     $lastName = $_POST['lastName'];
     $type = $_POST['type']; // 1 for Advisor, 2 for Co-Advisor
-    $acadYear = $_POST['acadYear'];
-    $semester = $_POST['semester'];
 
-    // Validate input (important for security and data integrity)
-    if (empty($advisorID) || empty($firstName) || empty($lastName) || empty($type) || empty($acadYear) || empty($semester)) {
-        echo "All fields are required. Please fill in all the information.";
+    // handle academic year selection or new year
+    if (isset($_POST['acadYear']) && $_POST['acadYear'] !== 'other') {
+        $acadYear = trim($_POST['acadYear']);
+    } elseif (isset($_POST['newAcadYear']) && $_POST['newAcadYear'] !== '') {
+        $acadYear = trim($_POST['newAcadYear']);
+    } else {
+        $acadYear = '';
+    }
+
+    // input validation
+    if (empty($advisorID) || empty($firstName) || empty($lastName) || empty($type) || empty($acadYear)) {
+        echo "<script>alert('All fields are required. Please fill in all the information.'); window.history.back();</script>";
         $conn->close();
         exit();
     }
 
+    // input validation for type
     if ($type != 1 && $type != 2) {
-        echo "Invalid advisor type.  Please select either Advisor or Co-Advisor.";
+        echo "<script>alert('Invalid advisor type. Please select either Advisor or Co-Advisor.'); window.history.back();</script>";
         $conn->close();
         exit();
     }
 
-    // Check if advisorID already exists in the advisor table
+    // check if advisorID already exists in the advisor table
     $checkSql = "SELECT advisorID FROM advisor WHERE advisorID = '$advisorID'";
     $checkResult = $conn->query($checkSql);
 
     if ($checkResult->num_rows > 0) {
-        echo "Advisor ID already exists. Please enter a unique Advisor ID.";
+        echo "<script>alert('Advisor ID already exists. Please enter a unique Advisor ID.'); window.history.back();</script>";
         $conn->close();
         exit();
     }
 
-    // Begin transaction (for data integrity, to ensure both tables are updated or neither is)
     $conn->begin_transaction();
 
-    // Insert into advisor table
+    // insert into advisor table
     $insertAdvisorSql = "INSERT INTO advisor (advisorID, firstName, middleInitial, lastName) VALUES ('$advisorID', '$firstName', '$middleInitial', '$lastName')";
     $advisorResult = $conn->query($insertAdvisorSql);
 
     if ($advisorResult) {
-        echo "Advisor record created successfully.<br>";
-        echo "<script>
-                alert('A member has been successfully added.');
-                window.location.href='homepage.php';
-              </script>";
-        // Insert into advises table
         $typeString = ($type == 1) ? 'Advisor' : 'Co-Advisor';
-        $insertAdvisesSql = "INSERT INTO advises (advisorID, type, acadYear, semester) VALUES ('$advisorID', '$typeString', '$acadYear', '$semester')";
-        $adviseResult = $conn->query($insertAdvisesSql);
 
-        if ($adviseResult) {
-            echo "Advises record created successfully.<br>";
-            $conn->commit(); // Commit the transaction
-            header("Location: homepage.php"); // Redirect to homepage
+        // Ensure the academic year exists for both semesters in academicyear table
+        $checkAcadYear1 = $conn->query("SELECT * FROM academicyear WHERE acadYear = '$acadYear' AND semester = 1");
+        $checkAcadYear2 = $conn->query("SELECT * FROM academicyear WHERE acadYear = '$acadYear' AND semester = 2");
+        if ($checkAcadYear1->num_rows == 0) {
+            $conn->query("INSERT INTO academicyear (acadYear, semester) VALUES ('$acadYear', 1)");
+        }
+        if ($checkAcadYear2->num_rows == 0) {
+            $conn->query("INSERT INTO academicyear (acadYear, semester) VALUES ('$acadYear', 2)");
+        }
+
+        
+        $typeString = ($type == 1) ? 'Advisor' : 'Co-Advisor';
+
+        // Check for duplicate assignment for both semesters
+        $dupCheck1 = $conn->query("SELECT * FROM advises WHERE acadYear = '$acadYear' AND semester = 1 AND type = '$typeString'");
+        $dupCheck2 = $conn->query("SELECT * FROM advises WHERE acadYear = '$acadYear' AND semester = 2 AND type = '$typeString'");
+        if (($dupCheck1 && $dupCheck1->num_rows > 0) || ($dupCheck2 && $dupCheck2->num_rows > 0)) {
+            echo "<script>alert('An advisor with the same academic year, semester, and type already exists.'); window.history.back();</script>";
+            $conn->close();
+            exit();
+        }
+
+        // insert for both semesters (1 and 2) for the selected academic year
+        $insertAdvisesSql1 = "INSERT INTO advises (advisorID, type, acadYear, semester) VALUES ('$advisorID', '$typeString', '$acadYear', 1)";
+        $insertAdvisesSql2 = "INSERT INTO advises (advisorID, type, acadYear, semester) VALUES ('$advisorID', '$typeString', '$acadYear', 2)";
+        $adviseResult1 = $conn->query($insertAdvisesSql1);
+        $adviseResult2 = $conn->query($insertAdvisesSql2);
+
+        if ($adviseResult1 && $adviseResult2) {
+            $conn->commit();
+            echo "<script>
+                    alert('Advisor has been successfully added for both semesters.');
+                    window.location.href='homepage.php?acadYear=$acadYear&semester=$semester';
+                  </script>";
             exit();
         } else {
-            echo "Error inserting into advises table: " . $conn->error . "<br>";
-            $conn->rollback(); // Rollback the transaction
+            echo "<script>alert('Error inserting into advises table: " . addslashes($conn->error) . "'); window.history.back();</script>";
+            $conn->rollback();
         }
     } else {
-        echo "Error inserting into advisor table: " . $conn->error . "<br>";
-        $conn->rollback(); // Rollback the transaction
+        echo "<script>alert('Error inserting into advisor table: " . addslashes($conn->error) . "'); window.history.back();</script>";
+        $conn->rollback();
     }
 
     $conn->close();
 }
+?>
