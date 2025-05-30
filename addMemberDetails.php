@@ -255,8 +255,7 @@
         <button type="button"
             onclick="
                 var acadYear = document.querySelector('select[name=acadYear]').value;
-                var semester = document.querySelector('select[name=semester]').value;
-                window.location.href = 'homepage.php?acadYear=' + encodeURIComponent(acadYear) + '&semester=' + encodeURIComponent(semester);
+                window.location.href = 'homepage.php?acadYear=' + encodeURIComponent(acadYear) + '&semester=1';
             "
             style="background-color:#640214;color:white;margin-top:10px;">
             Cancel

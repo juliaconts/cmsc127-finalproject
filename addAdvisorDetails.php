@@ -1,11 +1,13 @@
 <?php
 include 'DBConnector.php';
+//this is for choosing the academic year        
 $acadYearOptions = '';
 $sql = "SELECT DISTINCT acadYear FROM academicyear ORDER BY acadYear DESC";
 $result = $conn->query($sql);
 while ($row = $result->fetch_assoc()) {
     $acadYearOptions .= '<option value="' . htmlspecialchars($row['acadYear']) . '">' . htmlspecialchars($row['acadYear']) . '</option>';
 }
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -79,7 +81,7 @@ $conn->close();
         }
     </style>
     <script>
-    // Show input for new academic year if "Other" is selected
+    // add another year if it's not currently in the database
     document.addEventListener('DOMContentLoaded', function() {
         const acadYearSelect = document.getElementById('acadYearSelect');
         const newAcadYearInput = document.getElementById('newAcadYearInput');
@@ -137,6 +139,14 @@ $conn->close();
             </tr>
         </table>
         <button type="submit">Add Advisor</button>
+        <button type="button"
+            onclick="
+                var acadYear = document.querySelector('select[name=acadYear]').value;
+                window.location.href = 'homepage.php?acadYear=' + encodeURIComponent(acadYear) + '&semester=1';
+            "
+            style="background-color:#640214;color:white;margin-top:10px;">
+            Cancel
+        </button>
     </form>
 </body>
 </html>
